@@ -2,19 +2,18 @@
 
 https://www.respoke.io
 
-# Usage
 
-## Admin functionality
+# Admin functionality
+
+### Authenticating as an admin
 
     var Admin = require('respoke').Admin;
     var opts = {
-        // required
         username: "dude",
         password: "wassup"
     };
 
-    // Authenticate the admin to get the `Admin-Token` header for the Respoke API
-    var admin = new Admin(opts, function adminIsAuthenticated(err, authInfo) {
+    var admin = new Admin(opts, function (err, authInfo) {
 
         console.log(admin.adminToken, authInfo.token === admin.adminToken); // true
 
@@ -22,7 +21,7 @@ https://www.respoke.io
 
     });
 
-### Authenticate later
+### Authenticate as an admin, but not immediately
 
     var admin = new Admin({
         username: "asdf",
@@ -94,15 +93,17 @@ https://www.respoke.io
     });
 
 
-## Client functionality
+# Client functionality
     
 
 *Coming soon*
 
 
-# Test and development
+# Testing and development
 
-Rename `spec/helpers.example.js` to `spec/helpers.js` and:
+Rename `spec/helpers.example.js` to `spec/helpers.js` and put in your credentials.
+
+Testing requires mocha, then:
 
     npm test
 
