@@ -16,7 +16,7 @@ https://www.respoke.io
     // Authenticate the admin to get the `Admin-Token` header for the Respoke API
     var admin = new Admin(opts, function adminIsAuthenticated(err, authInfo) {
 
-        console.log(authInfo.token === admin.adminToken); // true
+        console.log(admin.adminToken, authInfo.token === admin.adminToken); // true
 
         // this admin can now do stuff
 
@@ -52,6 +52,47 @@ https://www.respoke.io
         // now you can give the tokenId back to your client and they can use it 
         // to authenticate as an endpoint to Respoke 
     });
+
+
+### Create a role
+
+    var role = {
+        "appId": "xxxx-xxx-xxxxx",
+        "name":"my-special-friends",
+        "mediaRelay": false,
+        "events": {
+            "subscribe": false,
+            "unsubscribe": false,
+        },
+        "groups": {
+            "list": true,
+            "*": {
+                "subscribe": true,
+                "unsubscribe": true,
+                "create": true,
+                "destroy": true,
+                "publish": true,
+                "getsubscribers": true
+            }
+        }
+    };
+
+    admin.createRole(role, function (err, createdRole) {
+        console.log(createdRole);
+    });
+
+### Get an app
+
+    admin.getApp({ appId: "xxxx-xxxxxx-xxx" }, function (err, app) {
+        console.log(app);
+    });
+
+### Get all of your apps
+
+    admin.getAllApps(function (err, arrayOfApps) {
+        console.log(arrayOfApps);
+    });
+
 
 ## Client functionality
     

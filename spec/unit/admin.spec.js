@@ -16,6 +16,7 @@ describe('respoke', function () {
                 should.not.exist(err);
                 authCredentials.should.be.an.Object;
                 authCredentials.token.should.be.a.String;
+                admin.adminToken.should.equal(authCredentials.token);
                 done();
             });
         });
@@ -96,7 +97,7 @@ describe('respoke', function () {
 
             });
 
-            describe.only('endpoint auth', function () {
+            describe('endpoint auth', function () {
                 var appId;
                 var roleId;
                 var endpointId = "fishbucket77";
