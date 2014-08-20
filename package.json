@@ -1,10 +1,10 @@
 {
   "name": "respoke",
-  "version": "0.0.1-1",
+  "version": "0.0.1-2",
   "description": "respoke client - coming soon",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha spec/**/*.spec.js"
   },
   "repository": {
     "type": "git",
@@ -19,15 +19,34 @@
     "url": "https://www.respoke.io"
   },
   "contributors": [
-    {"name": "Erin Spiceland", "email": "yes@erin.codes"},
-    {"name": "Dan Jenkins", "email": "me@dan-jenkins.co.uk"},
-    {"name": "Jeff Parrish", "email": "jeffhparrish@gmail.com"},
-    {"name": "Chad McElligott", "email": "chad.mcelligott@gmail.com"},
-    {"name": "David M. Lee, II", "email": "leedm777@yahoo.com"}
+    {
+      "name": "Erin Spiceland",
+      "email": "yes@erin.codes"
+    },
+    {
+      "name": "Dan Jenkins",
+      "email": "me@dan-jenkins.co.uk"
+    },
+    {
+      "name": "Jeff Parrish",
+      "email": "jeffhparrish@gmail.com"
+    },
+    {
+      "name": "Chad McElligott",
+      "email": "chad.mcelligott@gmail.com"
+    },
+    {
+      "name": "David M. Lee, II",
+      "email": "leedm777@yahoo.com"
+    }
   ],
   "license": "empty",
   "bugs": {
     "url": "https://github.com/respoke/node-respoke/issues"
   },
-  "homepage": "https://github.com/respoke/node-respoke"
+  "homepage": "https://github.com/respoke/node-respoke",
+  "devDependencies": {
+    "mocha": "^1.21.4",
+    "should": "^4.0.4"
+  }
 }
