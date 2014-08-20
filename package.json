@@ -1,6 +1,6 @@
 {
   "name": "respoke",
-  "version": "0.0.1",
+  "version": "0.0.1-1",
   "description": "respoke client - coming soon",
   "main": "index.js",
   "scripts": {
@@ -19,6 +19,7 @@
     "url": "https://www.respoke.io)"
   },
   "contributors": [
+    {"name": "Erin Spiceland", "email": "yes@erin.codes"},
     {"name": "Dan Jenkins", "email": "me@dan-jenkins.co.uk"},
     {"name": "Jeff Parrish", "email": "jeffhparrish@gmail.com"},
     {"name": "Chad McElligott", "email": "chad.mcelligott@gmail.com"},
