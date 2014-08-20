@@ -1,0 +1,32 @@
+{
+  "name": "respoke",
+  "version": "0.0.1",
+  "description": "respoke client - coming soon",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/respoke/node-respoke"
+  },
+  "keywords": [
+    "respoke"
+  ],
+  "author": {
+    "name": "Respoke",
+    "email": "support@respoke.io",
+    "url": "https://www.respoke.io)"
+  },
+  "contributors": [
+    {"name": "Dan Jenkins", "email": "me@dan-jenkins.co.uk"},
+    {"name": "Jeff Parrish", "email": "jeffhparrish@gmail.com"},
+    {"name": "Chad McElligott", "email": "chad.mcelligott@gmail.com"},
+    {"name": "David M. Lee, II", "email": "leedm777@yahoo.com"}
+  ],
+  "license": "empty",
+  "bugs": {
+    "url": "https://github.com/respoke/node-respoke/issues"
+  },
+  "homepage": "https://github.com/respoke/node-respoke"
+}
