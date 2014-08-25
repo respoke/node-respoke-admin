@@ -6,15 +6,15 @@ var uuid = require('uuid');
 var Client = respoke.Client;
 
 describe('Client', function () {
-    this.timeout(8000);
-    it.only('connects in developmentMode', function (done) {
+    this.timeout(10000);
+    it('connects in developmentMode', function (done) {
         var client = new Client({
             appId: helpers.appId,
             endpointId: "me",
             developmentMode: true,
             baseURL: helpers.baseURL
         });
-        client.on('connect', function (data) {
+        client.on('connect', function () {
             done();
         });
         client.on('error', function (err) {
@@ -22,14 +22,14 @@ describe('Client', function () {
         });
     });
 
-    describe('endpoints', function () {
+    describe.only('subscribers', function () {
         
-        var client;
+        var client = null;
 
         beforeEach(function (done) {
             client = new Client({
                 appId: helpers.appId,
-                endpointId: "me-" + uuid.v4(),
+                endpointId: "bot-" + uuid.v4(),
                 developmentMode: true,
                 baseURL: helpers.baseURL
             });
@@ -41,11 +41,11 @@ describe('Client', function () {
             });
         });
 
-        it('gets all endpoints', function (done) {
-            client.getAllEndpoints(function (err, endpoints) {
+        it('gets all subscribers', function (done) {
+            client.getAllSubscribers(function (err, subscribers) {
                 should.not.exist(err);
-                endpoints.should.be.an.Array;
-                console.log(endpoints);
+                subscribers.should.be.an.Array;
+                console.log(subscribers);
                 done();
             });
         });
