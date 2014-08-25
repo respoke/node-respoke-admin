@@ -6,6 +6,7 @@ exports = module.exports = {
         password: ""
     },
     appId: "",
+    appSecret: "",
     role: function () {
         return {
             "appId": "",

@@ -5,9 +5,9 @@ var uuid = require('uuid');
 
 var Client = respoke.Client;
 
-describe.only('Client', function () {
-    this.timeout(15000);
-    it('connects in developmentMode', function (done) {
+describe('Client', function () {
+    this.timeout(8000);
+    it.only('connects in developmentMode', function (done) {
         var client = new Client({
             appId: helpers.appId,
             endpointId: "me",
@@ -15,12 +15,39 @@ describe.only('Client', function () {
             baseURL: helpers.baseURL
         });
         client.on('connect', function (data) {
-            console.log(data);
             done();
         });
         client.on('error', function (err) {
-            console.error(err);
             done(err);
+        });
+    });
+
+    describe('endpoints', function () {
+        
+        var client;
+
+        beforeEach(function (done) {
+            client = new Client({
+                appId: helpers.appId,
+                endpointId: "me-" + uuid.v4(),
+                developmentMode: true,
+                baseURL: helpers.baseURL
+            });
+            client.on('connect', function (data) {
+                done();
+            });
+            client.on('error', function (err) {
+                done(err);
+            });
+        });
+
+        it('gets all endpoints', function (done) {
+            client.getAllEndpoints(function (err, endpoints) {
+                should.not.exist(err);
+                endpoints.should.be.an.Array;
+                console.log(endpoints);
+                done();
+            });
         });
     });
 
