@@ -5,7 +5,7 @@ var uuid = require('uuid');
 
 var Client = respoke.Client;
 
-describe('.Client', function () {
+describe('respoke.Client', function () {
     this.timeout(10000);
     it('connects in developmentMode', function (done) {
         var client = new Client({

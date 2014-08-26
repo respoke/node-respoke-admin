@@ -12,13 +12,9 @@ https://www.respoke.io
     var Admin = require('respoke').Admin;
     var appSecret = "xxx-xxxxxx-xx-xxxxxx";
 
-    var admin = new Admin({ appSecret: appSecret }, function (err, authInfo) {
-        if (err) {
-            console.error(err);
-            return;
-        }
-        console.log(admin.adminToken, authInfo.token === admin.adminToken); // true
-    });
+    var admin = new Admin({ appSecret: appSecret });
+
+    // ready to do brokered auth for endpoints
 
 
 ### Authenticating as a full admin
