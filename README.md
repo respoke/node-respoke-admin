@@ -155,3 +155,6 @@ Testing requires mocha, then:
 
     npm test
 
+### Debugging
+
+    $  DEBUG=respoke-client,respoke-admin npm test

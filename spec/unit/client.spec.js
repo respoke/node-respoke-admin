@@ -10,12 +10,17 @@ describe('respoke.Client', function () {
     it('connects in developmentMode', function (done) {
         var client = new Client({
             appId: helpers.appId,
-            endpointId: "me",
+            endpointId: "me-" + uuid.v4(),
             developmentMode: true,
             baseURL: helpers.baseURL
         });
         client.on('connect', function () {
-            done();
+            client.close(function (err) {
+                if (err) {
+                    return done(err);
+                }
+                done();
+            });
         });
         client.on('error', function (err) {
             done(err);
@@ -90,9 +95,19 @@ describe('respoke.Client', function () {
             });
         });
 
-        afterEach(function () {
-            client1 = null;
-            client2 = null;
+        afterEach(function (done) {
+            var closedTotal = 0;
+            var handler = function (err) {
+                if (err) {
+                    return done(err);
+                }
+                closedTotal++;
+                if (closedTotal === 2) {
+                    done();
+                }
+            };
+            client1.close(handler);
+            client2.close(handler);
             createdClients = 0;
         });
 
@@ -112,6 +127,43 @@ describe('respoke.Client', function () {
                     return done(err);
                 }
             });
+        });
+
+        it('sends and receives group messages', function (done) {
+            var groupId = 'somegroup-' + uuid.v4();
+            var totalJoined = 0;
+            var msgText = "Hey - " + uuid.v4();
+
+            var errHandler = function (err) {
+                if (err) {
+                    done(err);
+                    return;
+                }
+                totalJoined++;
+                if (totalJoined === 2) {
+                    doTest();
+                }
+            };
+
+            client1.join({ groupId: groupId }, errHandler);
+            client2.join({ groupId: groupId }, errHandler);
+
+            function doTest() {
+                client2.on('message', function (data) {
+                    data.header.type.should.equal('pubsub');
+                    data.header.from.should.equal(endpointId1);
+                    data.header.groupId.should.equal(groupId);
+                    done();
+                });
+                client1.sendMessage({
+                    groupId: groupId,
+                    message: msgText
+                }, function (err) {
+                    if (err) {
+                        return done(err);
+                    }
+                });
+            }
         });
     });
 

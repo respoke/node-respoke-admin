@@ -51,6 +51,7 @@
     "uuid": "^1.4.1"
   },
   "dependencies": {
+    "debug": "^1.0.4",
     "request": "^2.40.0",
     "socket.io-client": "^0.9.x"
   }
