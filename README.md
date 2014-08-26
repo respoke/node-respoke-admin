@@ -5,7 +5,23 @@ https://www.respoke.io
 
 # Admin functionality
 
-### Authenticating as an admin
+### Authenticate as an admin for doing client brokered auth only (recommended)
+
+[Read about Respoke Brokered Auth](https://docs-int.respoke.io/articles/tutorials/brokered-auth.html)
+
+    var Admin = require('respoke').Admin;
+    var appSecret = "xxx-xxxxxx-xx-xxxxxx";
+
+    var admin = new Admin({ appSecret: appSecret }, function (err, authInfo) {
+        if (err) {
+            console.error(err);
+            return;
+        }
+        console.log(admin.adminToken, authInfo.token === admin.adminToken); // true
+    });
+
+
+### Authenticating as a full admin
 
     var Admin = require('respoke').Admin;
     var opts = {
@@ -14,14 +30,14 @@ https://www.respoke.io
     };
 
     var admin = new Admin(opts, function (err, authInfo) {
-
+        if (err) {
+            console.error(err);
+            return;
+        }
         console.log(admin.adminToken, authInfo.token === admin.adminToken); // true
-
-        // this admin can now do stuff
-
     });
 
-### Authenticate as an admin, but not immediately
+#### Delay admin auth
 
     var admin = new Admin({
         username: "asdf",
@@ -35,9 +51,10 @@ https://www.respoke.io
         console.log("i am ready");
     });
 
-### Authenticate an endpoint
 
-[Respoke Brokered Auth](https://docs-int.respoke.io/articles/tutorials/brokered-auth.html)
+### Authenticate a client endpoint
+
+[Read about Respoke Brokered Auth](https://docs-int.respoke.io/articles/tutorials/brokered-auth.html)
 
     admin.authenticateEndpoint({
         appId: "xxxxx-xxxxx-xxxxxx",
