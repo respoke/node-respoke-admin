@@ -359,9 +359,9 @@ describe('respoke.Client', function () {
                 if (!gotJoin) {
                     return done(new Error("Did not get join event"));
                 }
-                // some of the connections are not getting cleaned up properly.
-                // this leave is getting called more than once with the same endpointId but
-                // different connectionIds
+                // Some of the connections are not getting cleaned up properly.
+                // This leave is getting called more than once with the same endpointId but
+                // different connectionIds.
                 if (!alreadyDoned) {
                     alreadyDoned = true;
                     done();

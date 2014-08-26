@@ -2,10 +2,19 @@
 
 https://www.respoke.io
 
+# Contents
+
+* [respoke.Admin](#admin-functionality)
+* [respoke.Client](#client-functionality)
+* [Testing and Dev](#testing-and-development)
+
+# Links
+
+* [Respoke Docs](https://docs.respoke.io)
 
 # Admin functionality
 
-### Authenticate as an admin for doing client brokered auth only (recommended)
+### Authenticate as an admin for doing brokered auth only (recommended)
 
 [Read about Respoke Brokered Auth](https://docs-int.respoke.io/articles/tutorials/brokered-auth.html)
 
@@ -126,7 +135,16 @@ https://www.respoke.io
         console.error('Something broke', err);
     });
 
-### Listen for messages
+### Send a message to an endpoint
+
+    client.sendMessage({
+        endpointId: "asdf-jkl",
+        message: "Hey Jude"
+    }, function (err) {
+        
+    });
+
+### Listen for private messages
 
     client.on('message', function (data) {
         console.log(data.header.type); // "message"
@@ -136,16 +154,83 @@ https://www.respoke.io
         console.log(message);
     });
 
-### Send a message
+### Send a message to a group
 
-    client.sendMessage({
-        endpointId: "asdf-jkl",
+    client.sendGroupMessage({
+        groupId: "beatles",
         message: "Hey Jude"
     }, function (err) {
+        
+    });
+
+### Listen for group messages
+
+    client.on('pubsub', function (data) {
+        console.log(data.header.groupId);
+    });
+
+### Join a group
+
+    client.join({ groupId: groupId }, function (err) {
+        
+    });
+
+### Leave a group
+    
+    client.leave({ groupId: groupId }, function (err) {
+        
+    });
+
+### Listen for people joining groups
+
+    client.on('join', function (data) {
+        console.log(data.header.groupId);
+    });
+
+### Listen for people leaving groups
+
+    client.on('leave', function (data) {
+        console.log(data.header.groupId);
+    });
+
+### Get all of the members of a group
+
+    client.getGroupMembers({ groupId: groupId }, function (err, members) {
+        console.log(members); // [{ endpointId: 'xxxxxx-xx-xx-xxxx', connectionId: 'xxxx-xxxx-xx-xxx' }]
+    });
+
+### Change your presence status
+
+    client.setPresence({ status: "Out to lunch, figuratively" }, function (err) {
         if (err) {
-            console.error(err);
+            done(err);
         }
     });
+
+### Listen for presence changes
+
+    client.registerPresence(['timmay', 'cartman'], function (err) {
+        if (err) {
+            done(err);
+        }
+    });
+
+### Other client socket events
+
+    client.on('one of the events below', function (perhapsErrOrData) {
+
+    });
+
+ * `socket`
+ * `connect`
+ * `disconnect`
+ * `reconnect`
+ * `reconnecting`
+ * `error`
+ * `connect_error`
+ * `connect_timeout`
+ * `reconnecting`
+ * `reconnect`
 
 # Testing and development
 
