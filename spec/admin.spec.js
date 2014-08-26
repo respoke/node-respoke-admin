@@ -1,6 +1,6 @@
-var respoke = require('../../index');
+var respoke = require('../index');
 var should = require('should');
-var helpers = require('../helpers');
+var helpers = require('./helpers');
 var uuid = require('uuid');
 
 describe('respoke.Admin', function () {
