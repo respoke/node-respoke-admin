@@ -123,7 +123,8 @@ https://www.respoke.io
     var opts = {
         appId: "xxxxxx-xxx-xxxxxx-xxxx",
         endpointId: "adalovelace",
-        developmentMode: true // optional dev mode flag for testing
+        token: 'tokenId received from admin.authenticateEndpoint()', // required unless developmentMode === true
+        developmentMode: true // optional dev mode flag for testing, to disable the need for token
     };
 
     var client = new Client(opts);
