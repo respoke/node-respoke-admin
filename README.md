@@ -217,7 +217,7 @@ https://www.respoke.io
 
 ### Other client socket events
 
-    client.on('one of the events below', function (perhapsErrOrData) {
+    client.on('one of the events below', function (err) {
 
     });
 
