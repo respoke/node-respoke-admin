@@ -95,9 +95,44 @@ https://www.respoke.io
 
 # Client functionality
     
+### Authenticate as a client
 
-*Coming soon*
+    var Client = require('respoke').Client;
+    var opts = {
+        appId: "xxxxxx-xxx-xxxxxx-xxxx",
+        endpointId: "adalovelace",
+        developmentMode: true // optional dev mode flag for testing
+    };
 
+    var client = new Client(opts);
+
+    client.on('connect', function () {
+        console.log('we made it');
+    });
+    client.on('error', function (err) {
+        console.error('Something broke', err);
+    });
+
+### Listen for messages
+
+    client.on('message', function (data) {
+        console.log(data.header.type); // "message"
+        console.log(data.header.from); // the endpointId who sent the message
+
+        var message = data.body;
+        console.log(message);
+    });
+
+### Send a message
+
+    client.sendMessage({
+        endpointId: "asdf-jkl",
+        message: "Hey Jude"
+    }, function (err) {
+        if (err) {
+            console.error(err);
+        }
+    });
 
 # Testing and development
 

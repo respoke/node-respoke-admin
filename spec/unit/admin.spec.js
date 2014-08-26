@@ -3,14 +3,27 @@ var should = require('should');
 var helpers = require('../helpers');
 var uuid = require('uuid');
 
-describe('respoke', function () {
-    describe('Admin', function () {
+describe('Respoke Public Client', function () {
+    describe('.Admin', function () {
         var Admin = respoke.Admin;
 
         it('authenticates with username and password', function (done) {
             var admin = new Admin({
                 username: helpers.auth.username,
                 password: helpers.auth.password,
+                baseURL: helpers.baseURL
+            }, function (err, authCredentials) {
+                should.not.exist(err);
+                authCredentials.should.be.an.Object;
+                authCredentials.token.should.be.a.String;
+                admin.adminToken.should.equal(authCredentials.token);
+                done();
+            });
+        });
+
+        it.only('authenticates with appSecret', function (done) {
+            var admin = new Admin({
+                appSecret: helpers.appSecret,
                 baseURL: helpers.baseURL
             }, function (err, authCredentials) {
                 should.not.exist(err);
