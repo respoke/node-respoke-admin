@@ -145,7 +145,7 @@ describe('respoke.Admin', function () {
                     baseURL: helpers.baseURL
                 });
 
-                admin.authenticateEndpoint({
+                admin2.authenticateEndpoint({
                     appId: appId,
                     roleId: roleId,
                     endpointId: endpointId,
