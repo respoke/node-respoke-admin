@@ -1,5 +1,9 @@
 # Respoke for Node
 
+[![NPM version](https://badge.fury.io/js/respoke.svg)](http://badge.fury.io/js/respoke)
+
+    npm install respoke
+
 https://www.respoke.io
 
 # Contents
