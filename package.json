@@ -1,10 +1,10 @@
 {
   "name": "respoke",
-  "version": "0.0.1-3",
+  "version": "0.0.1-4",
   "description": "respoke client - coming soon",
   "main": "index.js",
   "scripts": {
-    "test": "mocha spec/**/*.spec.js"
+    "test": "node_modules/mocha/bin/_mocha spec/**/*.spec.js"
   },
   "repository": {
     "type": "git",
@@ -46,12 +46,15 @@
   },
   "homepage": "https://github.com/respoke/node-respoke",
   "devDependencies": {
+    "grunt": "^0.4.5",
+    "jsdoxy": "^0.7.4",
     "mocha": "^1.21.4",
     "should": "^4.0.4",
     "uuid": "^1.4.1"
   },
   "dependencies": {
     "debug": "^1.0.4",
+    "lodash": "^2.4.1",
     "request": "^2.40.0",
     "socket.io-client": "^0.9.x"
   }

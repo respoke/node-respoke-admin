@@ -1,4 +1,1 @@
-exports = module.exports = {
-    Admin: require('./lib/admin'),
-    Client: require('./lib/client')
-};
+exports = module.exports = require('./lib/client');
