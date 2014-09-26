@@ -1,16 +1,12 @@
-# Respoke for Node
+# [Respoke](https://www.respoke.io) for Node
+
+#### Admin API Library
 
 [![NPM version](https://badge.fury.io/js/respoke.svg)](http://badge.fury.io/js/respoke)
 
     npm install respoke
 
-https://www.respoke.io
 
-# Contents
-
-* [respoke.Admin](#admin-functionality)
-* [respoke.Client](#client-functionality)
-* [Testing and Dev](#testing-and-development)
 
 # Links
 

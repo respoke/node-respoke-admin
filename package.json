@@ -1,6 +1,6 @@
 {
   "name": "respoke",
-  "version": "0.0.1-4",
+  "version": "0.0.2",
   "description": "respoke client - coming soon",
   "main": "index.js",
   "scripts": {

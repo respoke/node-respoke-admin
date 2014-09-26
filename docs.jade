@@ -9,8 +9,12 @@ html
   head
     title=subTitle + " - " + title 
     link(rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css")
+    link(rel="stylesheet" href="https://highlightjs.org/static/styles/github.css")
     script(src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js")
     script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js")
+    script(src="https://highlightjs.org/static/highlight.pack.js")
+    script.
+      hljs.initHighlightingOnLoad();
   body
     .container
       h1= title
@@ -40,6 +44,8 @@ html
               - comment.returns = returnStringArray[0];
             else if (tag.type === "augments" && tag.otherClass) 
               - comment.augments = tag.otherClass
+            else if (tag.type === "auth")
+              - comment.auth = tag.string.split(', ')
           
           - if (comment.ctx.name == className) classComment = comment;
           - else if (comment.ctx.type === 'event') publicEvents.push(comment);
@@ -60,7 +66,9 @@ html
         .comment(id=comment.ctx.name.replace('.','-'))
           if (indx === 0)
             //- do nothing, the first comment is the class declaration
+
           else if (comment.ctx.type === "property")
+            //- the title of the method or prop
             h3
               code= comment.type
               a.bold(href="#"+comment.ctx.name)= " " + className + "." + comment.ctx.name
@@ -75,6 +83,8 @@ html
               p: strong returns 
                 code= comment.returns || "undefined"
 
+
+          //- info about the method or prop
           if (comment.augments)
             p: strong extends&nbsp;
               a(href="/js-library/" + comment.augments + ".html"): code= comment.augments
@@ -84,10 +94,16 @@ html
               strong fires 
               code= comment.fires.map(function(f){ return f.replace(className + '#','') }).join('|')
 
+          if (comment.auth)
+            p
+              each meth in comment.auth
+                span.label.label-default= meth
+                | &nbsp;
+
           div!= comment.description.full
 
-          //- Do not show arguments on the class, because it makes it look like a constructor.
-          if (indx !== 0 && comment.methodParams.length)
+          //- Arguments
+          if (comment.methodParams.length)
             br
             h4 Arguments
 
