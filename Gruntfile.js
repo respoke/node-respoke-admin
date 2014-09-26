@@ -71,6 +71,7 @@ exports = module.exports = function (grunt) {
     ]);
 
     grunt.registerTask('build', [
+        'jshint',
         'jsdoxy',
         'copy:build'
     ]);

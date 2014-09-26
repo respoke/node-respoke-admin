@@ -3,3 +3,4 @@ spec/helpers.js
 *.log
 .DS_Store
 docs/
+coverage/

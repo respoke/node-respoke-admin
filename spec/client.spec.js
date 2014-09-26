@@ -7,7 +7,39 @@ var uuid = require('uuid');
 var respoke;
 
 describe('Respoke', function () {
-    this.timeout(15000);
+    this.timeout(10000);
+
+    describe('Base methods and properties', function () {
+        beforeEach(function () {
+            respoke = new Respoke({
+                baseURL: helpers.baseURL
+            });
+        });
+        it('has request', function () {
+            respoke.request.should.be.a.Function;
+        });
+        it('has wsCall', function () {
+            respoke.wsCall.should.be.a.Function;
+        });
+        it('is an EventEmitter', function () {
+            respoke.on.should.be.a.Function;
+            respoke.emit.should.be.a.Function;
+        });
+        it('has expected properties', function () {
+            respoke.tokens.should.be.an.Object;
+            (respoke.connectionId === null).should.be.ok;
+            (respoke.socket === null).should.be.ok;
+            respoke.baseURL.should.be.a.String;
+            respoke.baseURL.should.not.be.empty;
+
+            respoke.auth.should.be.an.Object;
+            respoke.groups.should.be.an.Object;
+            respoke.messages.should.be.an.Object;
+            respoke.roles.should.be.an.Object;
+            respoke.apps.should.be.an.Object;
+            respoke.presence.should.be.an.Object;
+        });
+    });
 
     describe('Authentication', function () {
 
@@ -87,7 +119,7 @@ describe('Respoke', function () {
             });
         });
 
-        it.only('gets a single app by id', function (done) {
+        it('gets a single app by id', function (done) {
             respoke.apps.get({ appId: helpers.appId }, function (err, singleApp) {
                 should.not.exist(err);
                 singleApp.should.be.an.Object;
@@ -99,34 +131,36 @@ describe('Respoke', function () {
     });
 
     describe('Roles', function () {
-        var role;
-        var someApp;
 
-        before(function (done) {
-            admin.getAllApps(function (err, allApps) {
-                someApp = allApps[0];
+        beforeEach(function (done) {
+            respoke = new Respoke({
+                baseURL: helpers.baseURL
+            });
+            respoke.auth.admin(helpers.auth, done);
+        });
+
+
+        it('fetches all roles for an app', function (done) {
+            respoke.roles.get({ appId: helpers.appId }, function (err, roles) {
+                should.not.exist(err);
+                roles.should.be.an.Array;
                 done();
             });
         });
-        after(function (done) {
-            admin.removeRole(role.id, done);
-        });
 
-        it('lets you create a role', function (done) {
-            var createThis = helpers.role();
-            createThis.appId = someApp.id;
-            createThis.name = "my-role-" + uuid.v4();
-
-            admin.createRole(createThis, function (err, createdRole) {
+        it('creates and removes a role', function (done) {
+            var role = helpers.role();
+            role.appId = helpers.appId;
+            role.name = 'test-role-' + uuid.v4();
+            respoke.roles.create(role, function (err, createdRole) {
                 should.not.exist(err);
-                role = createdRole;
-                role.id.should.be.a.String;
-                role.appId.should.equal(createThis.appId);
-                role.name.should.equal(createThis.name);
-                (JSON.stringify(role.events) === JSON.stringify(createThis.events)).should.be.ok;
-                (JSON.stringify(role.groups) === JSON.stringify(createThis.groups)).should.be.ok;
-
-                done();
+                createdRole.should.be.an.Object;
+                createdRole.appId.should.equal(role.appId);
+                createdRole.id.should.be.a.String;
+                respoke.roles.delete({ roleId: createdRole.id }, function (err) {
+                    should.not.exist(err);
+                    done();
+                });
             });
         });
 
