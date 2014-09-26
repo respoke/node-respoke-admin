@@ -166,11 +166,7 @@ describe('Respoke', function () {
 
     });
 
-    // -- 
-    // Tests below do not work
-    // --
-
-    xdescribe('Messaging and Groups', function () {
+    describe('Messaging and Groups', function () {
         var endpointId1 = "client1-" + uuid.v4();
         var endpointId2 = "client2-" + uuid.v4();
         var client1 = null;
@@ -180,12 +176,11 @@ describe('Respoke', function () {
         beforeEach(function (done) {
             createdClients = 0;
 
-            client1 = new Client({
-                appId: helpers.appId,
-                endpointId: endpointId1,
-                developmentMode: true,
+            client1 = new Respoke({
                 baseURL: helpers.baseURL
             });
+            client1.tokens['App-Secret'] = helpers.appSecret;
+            client1.auth.connect({ endpointId: endpointId1 });
             client1.on('connect', function (data) {
                 createdClients++;
                 if (createdClients === 2) {
@@ -195,12 +190,12 @@ describe('Respoke', function () {
             client1.on('error', function (err) {
                 done(err);
             });
-            client2 = new Client({
-                appId: helpers.appId,
-                endpointId: endpointId2,
-                developmentMode: true,
+
+            client2 = new Respoke({
                 baseURL: helpers.baseURL
             });
+            client2.tokens['App-Secret'] = helpers.appSecret;
+            client2.auth.connect({ endpointId: endpointId2 });
             client2.on('connect', function (data) {
                 createdClients++;
                 if (createdClients === 2) {
@@ -223,14 +218,14 @@ describe('Respoke', function () {
                     done();
                 }
             };
-            if (client1.isConnected()) {
+            if (client1.connectionId) {
                 client1.close(handler);
             } 
             else {
                 createdClients++;
                 handler();
             }
-            if (client2.isConnected()) {
+            if (client2.connectionId) {
                 client2.close(handler);
             }
             else {
@@ -240,7 +235,7 @@ describe('Respoke', function () {
         });
 
         // client 1 sending a message to client 2
-        it('sends and receives messages', function (done) {
+        it.only('sends and receives messages', function (done) {
             var msgText = "Hey - " + uuid.v4();
 
             client2.on('message', function (data) {
@@ -250,9 +245,12 @@ describe('Respoke', function () {
                 done();
             });
 
-            client1.sendMessage({ endpointId: endpointId2, message: msgText }, function (err) {
+            client1.messages.send({ 
+                to: endpointId2,
+                message: msgText
+            }, function (err) {
                 if (err) {
-                    return done(err);
+                    done(err);
                 }
             });
         });
