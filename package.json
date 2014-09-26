@@ -4,7 +4,9 @@
   "description": "respoke client - coming soon",
   "main": "index.js",
   "scripts": {
-    "test": "node_modules/mocha/bin/_mocha spec/**/*.spec.js"
+    "test": "node_modules/mocha/bin/_mocha spec/**/*.spec.js",
+    "debug-test": "DEBUG=respoke-client,respoke-admin npm test",
+    "docs": "node_modules/grunt-cli/bin/grunt docs"
   },
   "repository": {
     "type": "git",
@@ -47,6 +49,10 @@
   "homepage": "https://github.com/respoke/node-respoke",
   "devDependencies": {
     "grunt": "^0.4.5",
+    "grunt-cli": "^0.1.13",
+    "grunt-contrib-copy": "^0.6.0",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-open": "^0.2.3",
     "jsdoxy": "^0.7.4",
     "mocha": "^1.21.4",
     "should": "^4.0.4",
@@ -54,6 +60,7 @@
   },
   "dependencies": {
     "debug": "^1.0.4",
+    "grunt-http-server": "^1.0.0",
     "lodash": "^2.4.1",
     "request": "^2.40.0",
     "socket.io-client": "^0.9.x"

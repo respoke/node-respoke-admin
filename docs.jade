@@ -17,8 +17,8 @@ html
       hljs.initHighlightingOnLoad();
   body
     .container
-      h1= title
-      h2.help-block= subTitle
+      //- h1= title
+      //- h2.help-block= subTitle
 
       each comment in comments
         if !comment.isPrivate && comment.ctx && ['method','property','function','declaration','event'].indexOf(comment.ctx.type) !== -1 && comment.ctx.name !== "className"
