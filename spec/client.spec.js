@@ -14,7 +14,7 @@ describe('Respoke', function () {
         });
     });
 
-    describe.only('Authentication', function () {
+    describe('Authentication', function () {
         it('authenticates as an admin with username and password', function (done) {
             respoke.auth.admin(helpers.auth, function (err, body) {
                 if (err) {
