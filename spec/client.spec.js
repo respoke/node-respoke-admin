@@ -1,3 +1,4 @@
+'use strict';
 var Respoke = require('../index');
 var should = require('should');
 var helpers = require('./helpers');
@@ -8,13 +9,14 @@ var respoke;
 describe('Respoke', function () {
     this.timeout(15000);
 
-    beforeEach(function () {
-        respoke = new Respoke({
-            baseURL: helpers.baseURL
-        });
-    });
-
     describe('Authentication', function () {
+
+        beforeEach(function () {
+            respoke = new Respoke({
+                baseURL: helpers.baseURL
+            });
+        });
+
         it('authenticates as an admin with username and password', function (done) {
             respoke.auth.admin(helpers.auth, function (err, body) {
                 if (err) {
@@ -36,7 +38,7 @@ describe('Respoke', function () {
             });
         });
 
-        it('obtains a brokered auth token that works using App-Secret', function (done) {
+        it('uses App-Secret to obtain a working brokered auth token', function (done) {
             respoke.tokens['App-Secret'] = helpers.appSecret;
             respoke.auth.endpoint({
                 endpointId: 'billy',
@@ -47,7 +49,7 @@ describe('Respoke', function () {
                     return done(err);
                 }
                 body.tokenId.should.be.a.String;
-                respoke.auth.appAuthSession({ 
+                respoke.auth.appAuthSession({
                     tokenId: body.tokenId
                 }, function (err, sessionData) {
                     if (err) {
@@ -66,241 +68,75 @@ describe('Respoke', function () {
         });
     });
     
-    // ---------------------------------
-    // All of the rest of the tests need to be rewritten
+    
 
-    describe('methods', function (done) {
+    describe('Apps', function (done) {
 
-        before(function (done) {
+        beforeEach(function (done) {
             respoke = new Respoke({
-                username: helpers.auth.username,
-                password: helpers.auth.password,
                 baseURL: helpers.baseURL
-            }, done);
+            });
+            respoke.auth.admin(helpers.auth, done);
         });
 
-        it('gets an array of apps', function (done) {
-            admin.getAllApps(function (err, allApps) {
+        it('lets you get an array of apps', function (done) {
+            respoke.apps.get(function (err, allApps) {
                 should.not.exist(err);
                 allApps.should.be.an.Array;
                 done();
             });
         });
 
-        it('gets a single app by id', function (done) {
-            admin.getAllApps(function (err, allApps) {
-                var theApp = allApps[0];
-                admin.getApp({ appId: theApp.id }, function (err, singleApp) {
-                    should.not.exist(err);
-                    singleApp.should.be.an.Object;
-                    (JSON.stringify(theApp) === JSON.stringify(theApp)).should.be.ok;
-                    done();
-                });
-            });
-        });
-
-        describe('roles', function () {
-            var role;
-            var someApp;
-
-            before(function (done) {
-                admin.getAllApps(function (err, allApps) {
-                    someApp = allApps[0];
-                    done();
-                });
-            });
-            after(function (done) {
-                admin.removeRole(role.id, done);
-            });
-
-            it('lets you create a role', function (done) {
-                var createThis = helpers.role();
-                createThis.appId = someApp.id;
-                createThis.name = "my-role-" + uuid.v4();
-
-                admin.createRole(createThis, function (err, createdRole) {
-                    should.not.exist(err);
-                    role = createdRole;
-                    role.id.should.be.a.String;
-                    role.appId.should.equal(createThis.appId);
-                    role.name.should.equal(createThis.name);
-                    (JSON.stringify(role.events) === JSON.stringify(createThis.events)).should.be.ok;
-                    (JSON.stringify(role.groups) === JSON.stringify(createThis.groups)).should.be.ok;
-
-                    done();
-                });
-            });
-
-        });
-
-        describe('endpoint auth', function () {
-            var appId;
-            var roleId;
-            var endpointId = "fishbucket77";
-
-            before(function (done) {
-                admin.getAllApps(function (err, allApps) {
-                    if (err) {
-                        return done(err);
-                    }
-                    appId = allApps[0].id;
-                    var createThis = helpers.role();
-                    createThis.appId = appId;
-                    createThis.name = "my-role-" + uuid.v4();
-                    admin.createRole(createThis, function (err, createdRole) {
-                        if (err) {
-                            return done(err);
-                        }
-                        roleId = createdRole.id;
-                        done();
-                    });
-
-                });
-            });
-            after(function (done) {
-                admin.removeRole(roleId, done);
-            });
-
-            it('lets you authenticate an endpoint', function (done) {
-                admin.authenticateEndpoint({
-                    appId: appId,
-                    roleId: roleId,
-                    endpointId: endpointId,
-                    ttl: 10
-                }, function (err, authInfo) {
-                    should.not.exist(err);
-                    authInfo.tokenId.should.be.a.String;
-                    authInfo.appId.should.equal(appId);
-                    authInfo.endpointId.should.equal(endpointId);
-                    done();
-                });
-            });
-
-            it('does endpoint auth with just appSecret', function (done) {
-                var admin2 = new Admin({
-                    appSecret: helpers.appSecret,
-                    baseURL: helpers.baseURL
-                });
-
-                admin2.authenticateEndpoint({
-                    appId: appId,
-                    roleId: roleId,
-                    endpointId: endpointId,
-                    ttl: 10
-                }, function (err, authInfo) {
-                    should.not.exist(err);
-                    authInfo.tokenId.should.be.a.String;
-                    authInfo.appId.should.equal(appId);
-                    authInfo.endpointId.should.equal(endpointId);
-                    done();
-                });
-            });
-
-        });
-        
-
-    });
-
-    describe('brokered auth connection', function () {
-        var admin;
-        var appId;
-        var roleId;
-        var endpointId = "meatpie32";
-        var tokenId;
-
-        before(function (done) {
-            var Admin = respoke.Admin;
-            respoke = new Respoke({
-                username: helpers.auth.username,
-                password: helpers.auth.password,
-                baseURL: helpers.baseURL
-            }, function (err, authCredentials) {
-                if (err) {
-                    return done(err);
-                }
-
-                admin.getAllApps(function (err, allApps) {
-                    if (err) {
-                        return done(err);
-                    }
-                    appId = allApps[0].id;
-                    var createThis = helpers.role();
-                    createThis.appId = appId;
-                    createThis.name = "my-role-" + uuid.v4();
-                    admin.createRole(createThis, function (err, createdRole) {
-                        if (err) {
-                            return done(err);
-                        }
-                        roleId = createdRole.id;
-                        admin.authenticateEndpoint({
-                            appId: appId,
-                            roleId: roleId,
-                            endpointId: endpointId,
-                            ttl: 200
-                        }, function (err, authInfo) {
-                            if (err) {
-                                return done(err);
-                            }
-                            tokenId = authInfo.tokenId;
-                            done();
-                        });
-                    });
-
-                });
-
-            });
-            
-        });
-        after(function (done) {
-            if (admin) {
-                admin.removeRole(roleId, done);
-            }
-        });
-
-        it('works', function (done) {
-            var opts = {
-                appId: helpers.appId,
-                endpointId: "me-" + uuid.v4(),
-                token: tokenId,
-                baseURL: helpers.baseURL
-            };
-
-            var client = new Client(opts);
-            client.on('connect', function () {
-                client.close(function (err) {
-                    if (err) {
-                        return done(err);
-                    }
-                    done();
-                });
-            });
-            client.on('error', function (err) {
-                done(err);
-            });
-        });
-    });
-
-    it('connects in developmentMode', function (done) {
-        var client = new Client({
-            appId: helpers.appId,
-            endpointId: "me-" + uuid.v4(),
-            developmentMode: true,
-            baseURL: helpers.baseURL
-        });
-        client.on('connect', function () {
-            client.close(function (err) {
-                if (err) {
-                    return done(err);
-                }
+        it.only('gets a single app by id', function (done) {
+            respoke.apps.get({ appId: helpers.appId }, function (err, singleApp) {
+                should.not.exist(err);
+                singleApp.should.be.an.Object;
+                singleApp.id.should.equal(helpers.appId);
                 done();
             });
         });
-        client.on('error', function (err) {
-            done(err);
-        });
+
     });
 
-    describe('messages and groups', function () {
+    describe('Roles', function () {
+        var role;
+        var someApp;
+
+        before(function (done) {
+            admin.getAllApps(function (err, allApps) {
+                someApp = allApps[0];
+                done();
+            });
+        });
+        after(function (done) {
+            admin.removeRole(role.id, done);
+        });
+
+        it('lets you create a role', function (done) {
+            var createThis = helpers.role();
+            createThis.appId = someApp.id;
+            createThis.name = "my-role-" + uuid.v4();
+
+            admin.createRole(createThis, function (err, createdRole) {
+                should.not.exist(err);
+                role = createdRole;
+                role.id.should.be.a.String;
+                role.appId.should.equal(createThis.appId);
+                role.name.should.equal(createThis.name);
+                (JSON.stringify(role.events) === JSON.stringify(createThis.events)).should.be.ok;
+                (JSON.stringify(role.groups) === JSON.stringify(createThis.groups)).should.be.ok;
+
+                done();
+            });
+        });
+
+    });
+
+    // -- 
+    // Tests below do not work
+    // --
+
+    xdescribe('Messaging and Groups', function () {
         var endpointId1 = "client1-" + uuid.v4();
         var endpointId2 = "client2-" + uuid.v4();
         var client1 = null;

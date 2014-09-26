@@ -1,4 +1,5 @@
 exports = module.exports = function (grunt) {
+    grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('jsdoxy');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-copy');
@@ -6,6 +7,9 @@ exports = module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-open');
 
     grunt.initConfig({
+        jshint: {
+            respoke: ['lib/**/*.js', 'index.js']
+        },
         jsdoxy: {
             options: {
                 jsonOutput: 'docs/jsdoxy-output.json',
