@@ -2,5 +2,4 @@ node_modules/
 spec/helpers.js
 *.log
 .DS_Store
-docs/jsdoxy-output.json
-docs/lib/
+docs/
