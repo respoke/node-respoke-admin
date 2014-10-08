@@ -83,7 +83,7 @@ describe('Respoke', function () {
 
                 body.tokenId.should.be.a.String;
 
-                respoke.auth.appAuthSession({
+                respoke.auth.sessionToken({
                     tokenId: body.tokenId
                 }, function (err, sessionData) {
                     if (err) {
@@ -176,35 +176,65 @@ describe('Respoke', function () {
 
         beforeEach(function (done) {
             createdClients = 0;
+            var onConnect = function () {
+                createdClients++;
+                if (createdClients === 2) {
+                    done();
+                }
+            };
+
+            // do brokered auth for each client
 
             client1 = new Respoke({
-                baseURL: helpers.baseURL
+                baseURL: helpers.baseURL,
+                'App-Secret': helpers.appSecret
             });
-            client1.tokens['App-Secret'] = helpers.appSecret;
-            client1.auth.connect({ endpointId: endpointId1 });
-            client1.on('connect', function (data) {
-                createdClients++;
-                if (createdClients === 2) {
-                    done();
+            client1.auth.endpoint({
+                endpointId: endpointId1,
+                appId: helpers.appId,
+                roleId: helpers.roleId
+            }, function (err, body) {
+                if (err) {
+                    return done(err);
                 }
+
+                client1.auth.sessionToken({
+                    tokenId: body.tokenId
+                }, function (err, sessionData) {
+                    if (err) {
+                        return done(err);
+                    }
+                    client1.auth.connect({ endpointId: endpointId1 });
+                    client1.on('connect', onConnect);
+                    client1.on('error', done);
+                });
             });
-            client1.on('error', function (err) {
-                done(err);
-            });
+            
+
 
             client2 = new Respoke({
-                baseURL: helpers.baseURL
+                baseURL: helpers.baseURL,
+                'App-Secret': helpers.appSecret
             });
-            client2.tokens['App-Secret'] = helpers.appSecret;
-            client2.auth.connect({ endpointId: endpointId2 });
-            client2.on('connect', function (data) {
-                createdClients++;
-                if (createdClients === 2) {
-                    done();
+            client2.auth.endpoint({
+                endpointId: endpointId2,
+                appId: helpers.appId,
+                roleId: helpers.roleId
+            }, function (err, body) {
+                if (err) {
+                    return done(err);
                 }
-            });
-            client2.on('error', function (err) {
-                done(err);
+
+                client2.auth.sessionToken({
+                    tokenId: body.tokenId
+                }, function (err, sessionData) {
+                    if (err) {
+                        return done(err);
+                    }
+                    client2.auth.connect({ endpointId: endpointId2 });
+                    client2.on('connect', onConnect);
+                    client2.on('error', done);
+                });
             });
         });
 
@@ -240,6 +270,7 @@ describe('Respoke', function () {
             var msgText = "Hey - " + uuid.v4();
 
             client2.on('message', function (data) {
+                console.log('GOT MESSAGE', data);
                 data.header.type.should.equal('message');
                 data.header.from.should.equal(endpointId1);
                 data.body.should.equal(msgText);
@@ -249,9 +280,10 @@ describe('Respoke', function () {
             client1.messages.send({
                 to: endpointId2,
                 message: msgText
-            }, function (err) {
+            }, function (err, info) {
                 if (err) {
                     done(err);
+                    return;
                 }
             });
         });
@@ -356,10 +388,7 @@ describe('Respoke', function () {
 
             function doTest() {
                 client2.on('pubsub', function (data) {
-                    // Because this is using an App-Secret token the 'from'
-                    // value will always be '__SYSTEM__' so test for that here
-                    // instead of the endpointId
-                    data.header.from.should.equal('__SYSTEM__');
+                    data.header.from.should.equal(endpointId1);
                     data.header.groupId.should.equal(groupId);
                     data.header.type.should.equal('pubsub');
                     data.message.should.equal(msgText);
