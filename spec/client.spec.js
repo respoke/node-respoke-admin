@@ -273,14 +273,8 @@ describe('Respoke', function () {
                 }
             };
 
-            client1.groups.join({
-                groupId: groupId,
-                endpointId: endpointId1
-            }, errHandler);
-            client2.groups.join({
-                groupId: groupId,
-                endpointId: endpointId2
-            }, errHandler);
+            client1.groups.join({ groupId: groupId }, errHandler);
+            client2.groups.join({ groupId: groupId }, errHandler);
 
             function doTest() {
 
@@ -357,14 +351,8 @@ describe('Respoke', function () {
                 }
             };
 
-            client1.groups.join({
-                groupId: groupId,
-                endpointId: endpointId1
-            }, errHandler);
-            client2.groups.join({
-                groupId: groupId,
-                endpointId: endpointId2
-            }, errHandler);
+            client1.groups.join({ groupId: groupId }, errHandler);
+            client2.groups.join({ groupId: groupId }, errHandler);
 
             function doTest() {
                 client2.on('pubsub', function (data) {
