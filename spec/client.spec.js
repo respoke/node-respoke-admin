@@ -80,7 +80,9 @@ describe('Respoke', function () {
                 if (err) {
                     return done(err);
                 }
+
                 body.tokenId.should.be.a.String;
+
                 respoke.auth.appAuthSession({
                     tokenId: body.tokenId
                 }, function (err, sessionData) {
@@ -99,8 +101,7 @@ describe('Respoke', function () {
             });
         });
     });
-    
-    
+
 
     describe('Apps', function (done) {
 
@@ -235,7 +236,7 @@ describe('Respoke', function () {
         });
 
         // client 1 sending a message to client 2
-        it.only('sends and receives messages', function (done) {
+        it('sends and receives messages', function (done) {
             var msgText = "Hey - " + uuid.v4();
 
             client2.on('message', function (data) {
@@ -245,7 +246,7 @@ describe('Respoke', function () {
                 done();
             });
 
-            client1.messages.send({ 
+            client1.messages.send({
                 to: endpointId2,
                 message: msgText
             }, function (err) {
@@ -255,7 +256,8 @@ describe('Respoke', function () {
             });
         });
 
-        it('lists groups members and observes presence', function (done) {
+        // TODO: has method calls that need implementations, eg registerPresence
+        it.skip('lists groups members and observes presence', function (done) {
             var groupId = 'somegroup-' + uuid.v4();
             var totalJoined = 0;
             var msgText = "Hey - " + uuid.v4();
@@ -271,13 +273,19 @@ describe('Respoke', function () {
                 }
             };
 
-            client1.join({ groupId: groupId }, errHandler);
-            client2.join({ groupId: groupId }, errHandler);
+            client1.groups.join({
+                groupId: groupId,
+                endpointId: endpointId1
+            }, errHandler);
+            client2.groups.join({
+                groupId: groupId,
+                endpointId: endpointId2
+            }, errHandler);
 
             function doTest() {
 
                 // Make sure both members are in the group
-                client1.getGroupMembers({ groupId: groupId }, function (err, members) {
+                client1.groups.getSubscribers({ groupId: groupId }, function (err, members) {
                     if (err) {
                         return done(err);
                     }
@@ -303,6 +311,7 @@ describe('Respoke', function () {
                         return memb.endpointId;
                     });
                     var testStatus = 'At lunch';
+                    // TODO implement
                     client1.registerPresence(endpoints, function (err) {
                         if (err) {
                             done(err);
@@ -348,18 +357,27 @@ describe('Respoke', function () {
                 }
             };
 
-            client1.join({ groupId: groupId }, errHandler);
-            client2.join({ groupId: groupId }, errHandler);
+            client1.groups.join({
+                groupId: groupId,
+                endpointId: endpointId1
+            }, errHandler);
+            client2.groups.join({
+                groupId: groupId,
+                endpointId: endpointId2
+            }, errHandler);
 
             function doTest() {
                 client2.on('pubsub', function (data) {
-                    data.header.from.should.equal(endpointId1);
+                    // Because this is using an App-Secret token the 'from'
+                    // value will always be '__SYSTEM__' so test for that here
+                    // instead of the endpointId
+                    data.header.from.should.equal('__SYSTEM__');
                     data.header.groupId.should.equal(groupId);
                     data.header.type.should.equal('pubsub');
                     data.message.should.equal(msgText);
                     done();
                 });
-                client1.sendGroupMessage({
+                client1.groups.publish({
                     groupId: groupId,
                     message: msgText
                 }, function (err) {
@@ -377,7 +395,7 @@ describe('Respoke', function () {
             var gotJoin = false;
             var alreadyDoned = false;
 
-            client1.join({ groupId: groupId }, function (err) {
+            client1.groups.join({ groupId: groupId }, function (err) {
                 if (err) {
                     return done(err);
                 }
@@ -395,12 +413,12 @@ describe('Respoke', function () {
 
                 setTimeout(function () {
 
-                    client2.join({ groupId: groupId }, function (err) {
+                    client2.groups.join({ groupId: groupId }, function (err) {
                         if (err) {
                             return done(err);
                         }
                         setTimeout(function () {
-                            client2.leave({ groupId: groupId }, function (err) {
+                            client2.groups.leave({ groupId: groupId }, function (err) {
                                 if (err) {
                                     return done(err);
                                 }
