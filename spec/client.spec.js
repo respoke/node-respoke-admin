@@ -270,7 +270,6 @@ describe('Respoke', function () {
             var msgText = "Hey - " + uuid.v4();
 
             client2.on('message', function (data) {
-                console.log('GOT MESSAGE', data);
                 data.header.type.should.equal('message');
                 data.header.from.should.equal(endpointId1);
                 data.body.should.equal(msgText);
