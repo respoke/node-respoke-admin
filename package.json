@@ -6,7 +6,8 @@
   "scripts": {
     "test": "node_modules/.bin/istanbul cover node_modules/.bin/_mocha spec/**/*.spec.js",
     "debug-test": "DEBUG=respoke-client,respoke-admin npm test",
-    "docs": "node_modules/grunt-cli/bin/grunt docs"
+    "docs": "node_modules/grunt-cli/bin/grunt docs",
+    "build-readme": "node_modules/grunt-cli/bin/grunt build"
   },
   "repository": {
     "type": "git",

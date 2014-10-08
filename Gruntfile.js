@@ -8,7 +8,10 @@ exports = module.exports = function (grunt) {
 
     grunt.initConfig({
         jshint: {
-            respoke: ['lib/**/*.js', 'index.js']
+            respoke: ['lib/**/*.js', 'index.js'],
+            options: {
+                jshintrc: '.jshintrc'
+            }
         },
         jsdoxy: {
             options: {
