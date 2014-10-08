@@ -287,8 +287,7 @@ describe('Respoke', function () {
             });
         });
 
-        // TODO: has method calls that need implementations, eg registerPresence
-        it.skip('lists groups members and observes presence', function (done) {
+        it('lists groups members and observes presence', function (done) {
             var groupId = 'somegroup-' + uuid.v4();
             var totalJoined = 0;
             var msgText = "Hey - " + uuid.v4();
@@ -336,8 +335,7 @@ describe('Respoke', function () {
                         return memb.endpointId;
                     });
                     var testStatus = 'At lunch';
-                    // TODO implement
-                    client1.registerPresence(endpoints, function (err) {
+                    client1.presence.observe(endpoints, function (err) {
                         if (err) {
                             done(err);
                         }
@@ -355,7 +353,7 @@ describe('Respoke', function () {
 
                     // ensure there was time to subscribe
                     setTimeout(function () {
-                        client2.setPresence({ status: testStatus }, function (err) {
+                        client2.presence.set({ status: testStatus }, function (err) {
                             if (err) {
                                 done(err);
                             }
