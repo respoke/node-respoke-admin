@@ -7,6 +7,7 @@ exports = module.exports = {
     },
     appId: "",
     appSecret: "",
+    roleId: "",
     role: function () {
         return {
             "appId": "",

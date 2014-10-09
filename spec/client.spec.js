@@ -15,16 +15,24 @@ describe('Respoke', function () {
                 baseURL: helpers.baseURL
             });
         });
+
         it('has request', function () {
             respoke.request.should.be.a.Function;
         });
+
         it('has wsCall', function () {
             respoke.wsCall.should.be.a.Function;
         });
+
+        it('has noop', function () {
+            respoke.noop.should.be.a.Function;
+        });
+
         it('is an EventEmitter', function () {
             respoke.on.should.be.a.Function;
             respoke.emit.should.be.a.Function;
         });
+
         it('has expected properties', function () {
             respoke.tokens.should.be.an.Object;
             (respoke.connectionId === null).should.be.ok;
@@ -80,8 +88,10 @@ describe('Respoke', function () {
                 if (err) {
                     return done(err);
                 }
+
                 body.tokenId.should.be.a.String;
-                respoke.auth.appAuthSession({
+
+                respoke.auth.sessionToken({
                     tokenId: body.tokenId
                 }, function (err, sessionData) {
                     if (err) {
@@ -99,8 +109,7 @@ describe('Respoke', function () {
             });
         });
     });
-    
-    
+
 
     describe('Apps', function (done) {
 
@@ -175,35 +184,65 @@ describe('Respoke', function () {
 
         beforeEach(function (done) {
             createdClients = 0;
+            var onConnect = function () {
+                createdClients++;
+                if (createdClients === 2) {
+                    done();
+                }
+            };
+
+            // do brokered auth for each client
 
             client1 = new Respoke({
-                baseURL: helpers.baseURL
+                baseURL: helpers.baseURL,
+                'App-Secret': helpers.appSecret
             });
-            client1.tokens['App-Secret'] = helpers.appSecret;
-            client1.auth.connect({ endpointId: endpointId1 });
-            client1.on('connect', function (data) {
-                createdClients++;
-                if (createdClients === 2) {
-                    done();
+            client1.auth.endpoint({
+                endpointId: endpointId1,
+                appId: helpers.appId,
+                roleId: helpers.roleId
+            }, function (err, body) {
+                if (err) {
+                    return done(err);
                 }
+
+                client1.auth.sessionToken({
+                    tokenId: body.tokenId
+                }, function (err, sessionData) {
+                    if (err) {
+                        return done(err);
+                    }
+                    client1.auth.connect({ endpointId: endpointId1 });
+                    client1.on('connect', onConnect);
+                    client1.on('error', done);
+                });
             });
-            client1.on('error', function (err) {
-                done(err);
-            });
+            
+
 
             client2 = new Respoke({
-                baseURL: helpers.baseURL
+                baseURL: helpers.baseURL,
+                'App-Secret': helpers.appSecret
             });
-            client2.tokens['App-Secret'] = helpers.appSecret;
-            client2.auth.connect({ endpointId: endpointId2 });
-            client2.on('connect', function (data) {
-                createdClients++;
-                if (createdClients === 2) {
-                    done();
+            client2.auth.endpoint({
+                endpointId: endpointId2,
+                appId: helpers.appId,
+                roleId: helpers.roleId
+            }, function (err, body) {
+                if (err) {
+                    return done(err);
                 }
-            });
-            client2.on('error', function (err) {
-                done(err);
+
+                client2.auth.sessionToken({
+                    tokenId: body.tokenId
+                }, function (err, sessionData) {
+                    if (err) {
+                        return done(err);
+                    }
+                    client2.auth.connect({ endpointId: endpointId2 });
+                    client2.on('connect', onConnect);
+                    client2.on('error', done);
+                });
             });
         });
 
@@ -235,7 +274,7 @@ describe('Respoke', function () {
         });
 
         // client 1 sending a message to client 2
-        it.only('sends and receives messages', function (done) {
+        it('sends and receives messages', function (done) {
             var msgText = "Hey - " + uuid.v4();
 
             client2.on('message', function (data) {
@@ -245,12 +284,13 @@ describe('Respoke', function () {
                 done();
             });
 
-            client1.messages.send({ 
+            client1.messages.send({
                 to: endpointId2,
                 message: msgText
-            }, function (err) {
+            }, function (err, info) {
                 if (err) {
                     done(err);
+                    return;
                 }
             });
         });
@@ -271,13 +311,13 @@ describe('Respoke', function () {
                 }
             };
 
-            client1.join({ groupId: groupId }, errHandler);
-            client2.join({ groupId: groupId }, errHandler);
+            client1.groups.join({ groupId: groupId }, errHandler);
+            client2.groups.join({ groupId: groupId }, errHandler);
 
             function doTest() {
 
                 // Make sure both members are in the group
-                client1.getGroupMembers({ groupId: groupId }, function (err, members) {
+                client1.groups.getSubscribers({ groupId: groupId }, function (err, members) {
                     if (err) {
                         return done(err);
                     }
@@ -303,7 +343,7 @@ describe('Respoke', function () {
                         return memb.endpointId;
                     });
                     var testStatus = 'At lunch';
-                    client1.registerPresence(endpoints, function (err) {
+                    client1.presence.observe(endpoints, function (err) {
                         if (err) {
                             done(err);
                         }
@@ -321,7 +361,7 @@ describe('Respoke', function () {
 
                     // ensure there was time to subscribe
                     setTimeout(function () {
-                        client2.setPresence({ status: testStatus }, function (err) {
+                        client2.presence.set({ status: testStatus }, function (err) {
                             if (err) {
                                 done(err);
                             }
@@ -348,8 +388,8 @@ describe('Respoke', function () {
                 }
             };
 
-            client1.join({ groupId: groupId }, errHandler);
-            client2.join({ groupId: groupId }, errHandler);
+            client1.groups.join({ groupId: groupId }, errHandler);
+            client2.groups.join({ groupId: groupId }, errHandler);
 
             function doTest() {
                 client2.on('pubsub', function (data) {
@@ -359,7 +399,7 @@ describe('Respoke', function () {
                     data.message.should.equal(msgText);
                     done();
                 });
-                client1.sendGroupMessage({
+                client1.groups.publish({
                     groupId: groupId,
                     message: msgText
                 }, function (err) {
@@ -377,7 +417,7 @@ describe('Respoke', function () {
             var gotJoin = false;
             var alreadyDoned = false;
 
-            client1.join({ groupId: groupId }, function (err) {
+            client1.groups.join({ groupId: groupId }, function (err) {
                 if (err) {
                     return done(err);
                 }
@@ -395,12 +435,12 @@ describe('Respoke', function () {
 
                 setTimeout(function () {
 
-                    client2.join({ groupId: groupId }, function (err) {
+                    client2.groups.join({ groupId: groupId }, function (err) {
                         if (err) {
                             return done(err);
                         }
                         setTimeout(function () {
-                            client2.leave({ groupId: groupId }, function (err) {
+                            client2.groups.leave({ groupId: groupId }, function (err) {
                                 if (err) {
                                     return done(err);
                                 }

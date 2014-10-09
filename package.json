@@ -4,9 +4,10 @@
   "description": "respoke client - coming soon",
   "main": "index.js",
   "scripts": {
-    "test": "node_modules/.bin/istanbul cover node_modules/.bin/_mocha spec/**/*.spec.js",
+    "test": "istanbul cover _mocha spec/**/*.spec.js",
     "debug-test": "DEBUG=respoke-client,respoke-admin npm test",
-    "docs": "node_modules/grunt-cli/bin/grunt docs"
+    "docs": "grunt docs",
+    "build-readme": "grunt build"
   },
   "repository": {
     "type": "git",
@@ -40,6 +41,10 @@
     {
       "name": "David M. Lee, II",
       "email": "leedm777@yahoo.com"
+    },
+    {
+      "name": "Matthew Turney",
+      "email": "matthew.a.turney@gmail.com"
     }
   ],
   "license": "empty",
