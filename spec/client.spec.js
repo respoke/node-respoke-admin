@@ -15,16 +15,24 @@ describe('Respoke', function () {
                 baseURL: helpers.baseURL
             });
         });
+
         it('has request', function () {
             respoke.request.should.be.a.Function;
         });
+
         it('has wsCall', function () {
             respoke.wsCall.should.be.a.Function;
         });
+
+        it('has noop', function () {
+            respoke.noop.should.be.a.Function;
+        });
+
         it('is an EventEmitter', function () {
             respoke.on.should.be.a.Function;
             respoke.emit.should.be.a.Function;
         });
+
         it('has expected properties', function () {
             respoke.tokens.should.be.an.Object;
             (respoke.connectionId === null).should.be.ok;
