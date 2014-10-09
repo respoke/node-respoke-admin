@@ -2,14 +2,26 @@
 var helpers = require('../helpers');
 var Respoke = require('../../index');
 var should = require('should');
+var uuid = require('uuid');
+var nock = require('nock');
+var errors = require('../../lib/utils/errors');
+
+nock.disableNetConnect();
 
 describe('respoke', function () {
-    describe('Base methods and properties', function () {
-        var respoke;
+    var respoke;
+    var nocked;
+    var baseDomain = 'http://respoke.test';
+    var baseURL = baseDomain + '/v1';
 
+    before(function () {
+        nocked = nock(baseDomain);
+    });
+
+    describe('Base methods and properties', function () {
         before(function () {
             respoke = new Respoke({
-                baseURL: helpers.baseURL
+                baseURL: baseURL
             });
         });
 
@@ -39,6 +51,97 @@ describe('respoke', function () {
             respoke.roles.should.be.an.Object;
             respoke.apps.should.be.an.Object;
             respoke.presence.should.be.an.Object;
+            });
+    });
+
+    describe('auth', function () {
+        describe('endpoint', function () {
+            before(function () {
+                respoke = new Respoke({
+                    baseURL: baseURL
+                });
+            });
+
+            it('requires an appId', function (done) {
+                respoke.auth.endpoint({}, function (err) {
+                    should.exist(err);
+                    err.message.should.match(/appId is null/);
+                    done();
+                });
+            });
+
+            it('requires an endpointId', function (done) {
+                respoke.auth.endpoint(
+                    { appId: uuid.v4() },
+                    function (err) {
+                        should.exist(err);
+                        err.message.should.match(/endpointId is null/);
+                        done();
+                    }
+                );
+            });
+
+            describe('when there is no http error', function () {
+                var expectedData = 'booya';
+
+                beforeEach(function () {
+                    nocked
+                        .post('/v1/tokens')
+                        .reply(200, expectedData);
+                });
+
+                it('returns data to callback', function (done) {
+                    respoke.auth.endpoint({
+                        appId: uuid.v4(),
+                        endpointId: uuid.v4()
+                    }, function (err, data) {
+                        should.not.exist(err);
+                        data.should.equal(expectedData);
+                        done();
+                    });
+                });
+
+                it('resolves promise with data', function (done) {
+                    respoke.auth.endpoint({
+                        appId: uuid.v4(),
+                        endpointId: uuid.v4()
+                    }).then(function (data) {
+                        data.should.equal(expectedData);
+                        done();
+                    });
+                });
+            });
+
+            describe('when there is an http error', function () {
+                var expectedData = 'booya';
+
+                beforeEach(function () {
+                    nocked
+                        .post('/v1/tokens')
+                        .reply(500, expectedData);
+                });
+
+                it('returns error to callback', function (done) {
+                    respoke.auth.endpoint({
+                        appId: uuid.v4(),
+                        endpointId: uuid.v4()
+                    }, function (err) {
+                        should.exist(err);
+                        err.should.be.an.instanceof(errors.UnexpectedServerResponseError);
+                        done();
+                    });
+                });
+
+                it('rejects promise with error', function (done) {
+                    respoke.auth.endpoint({
+                        appId: uuid.v4(),
+                        endpointId: uuid.v4()
+                    }).catch(function (err) {
+                        err.should.be.an.instanceof(errors.UnexpectedServerResponseError);
+                        done();
+                    });
+                });
+            });
         });
     });
 });
