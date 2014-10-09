@@ -5,6 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "istanbul cover _mocha spec/**/*.spec.js",
+    "functional": "_mocha spec/functional/**/*.spec.js",
+    "unit": "_mocha spec/unit/**/*.spec.js",
     "debug-test": "DEBUG=respoke-client,respoke-admin npm test",
     "docs": "grunt docs",
     "build-readme": "grunt build"

@@ -110,7 +110,9 @@
         "it",
         "describe",
         "xit",
-        "xdescribe"
+        "xdescribe",
+        "before",
+        "beforeEach"
     ],
     "indent"        : 4         // Specify indentation spacing
 }
