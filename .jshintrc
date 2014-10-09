@@ -105,6 +105,8 @@
 
     "maxerr"        : 100,      // Maximum errors before stopping.
     "predef"        : [         // Extra globals.
+        // Promise is in jshint@2.5.4, but not in node.js 0.10
+        "-Promise",
         "it",
         "describe",
         "xit",

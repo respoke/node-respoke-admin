@@ -69,8 +69,9 @@
   },
   "dependencies": {
     "debug": "^1.0.4",
-    "grunt-http-server": "^1.0.0",
+    "es6-promise": "^1.0.0",
     "lodash": "^2.4.1",
+    "nodeify": "^1.0.0",
     "request": "^2.40.0",
     "socket.io-client": "^0.9.x"
   }
