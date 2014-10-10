@@ -143,5 +143,95 @@ describe('respoke', function () {
                 });
             });
         });
+
+        describe('sessionToken', function () {
+            var tokenId = uuid.v4();
+
+            before(function () {
+                respoke = new Respoke({
+                    baseURL: baseURL
+                });
+            });
+
+            beforeEach(function () {
+                respoke.tokens['App-Token'] = null;
+            });
+
+            it('requires a tokenId', function (done) {
+                respoke.auth.sessionToken({}, function (err) {
+                    should.exist(err);
+                    err.message.should.match(/tokenId/);
+                    done();
+                });
+            });
+
+            describe('when there is no http error', function () {
+                var expectedData = { token: 'booya' };
+
+                beforeEach(function () {
+                    nocked
+                        .post('/v1/session-tokens', {
+                            tokenId: tokenId
+                        })
+                        .reply(200, expectedData);
+                });
+
+                it('returns data to callback', function (done) {
+                    respoke.auth.sessionToken({
+                        tokenId: tokenId
+                    }, function (err, data) {
+                        should.not.exist(err);
+                        should.exist(data.token);
+                        data.token.should.equal(expectedData.token);
+                        respoke.tokens['App-Token']
+                            .should.equal(expectedData.token);
+                        done();
+                    });
+                });
+
+                it('resolves promise with data', function (done) {
+                    respoke.auth.sessionToken({
+                        tokenId: tokenId
+                    }).then(function (data) {
+                        should.exist(data.token);
+                        data.token.should.equal(expectedData.token);
+                        respoke.tokens['App-Token']
+                            .should.equal(expectedData.token);
+                        done();
+                    });
+                });
+            });
+
+            describe('when there is an http error', function () {
+                var expectedData = 'booya';
+
+                beforeEach(function () {
+                    nocked
+                        .post('/v1/session-tokens', {
+                            tokenId: tokenId
+                        })
+                        .reply(500, expectedData);
+                });
+
+                it('returns error to callback', function (done) {
+                    respoke.auth.sessionToken({
+                        tokenId: tokenId
+                    }, function (err) {
+                        should.exist(err);
+                        err.should.be.an.instanceof(errors.UnexpectedServerResponseError);
+                        done();
+                    });
+                });
+
+                it('rejects promise with error', function (done) {
+                    respoke.auth.sessionToken({
+                        tokenId: tokenId
+                    }).catch(function (err) {
+                        err.should.be.an.instanceof(errors.UnexpectedServerResponseError);
+                        done();
+                    });
+                });
+            });
+        });
     });
 });
