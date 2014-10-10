@@ -6,8 +6,6 @@ var uuid = require('uuid');
 var nock = require('nock');
 var errors = require('../../lib/utils/errors');
 
-nock.disableNetConnect();
-
 describe('respoke', function () {
     var respoke;
     var nocked;
@@ -16,6 +14,7 @@ describe('respoke', function () {
 
     before(function () {
         nocked = nock(baseDomain);
+        nock.disableNetConnect(baseDomain);
     });
 
     describe('Base methods and properties', function () {
