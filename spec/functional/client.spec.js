@@ -33,7 +33,6 @@ describe('Respoke functional', function () {
                 password: 'sea-monkeys'
             }, function (err, body) {
                 err.should.be.an.Error;
-                should(body.token).be.not.ok;
                 done();
             });
         });
