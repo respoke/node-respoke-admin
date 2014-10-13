@@ -49,7 +49,7 @@
       "email": "matthew.a.turney@gmail.com"
     }
   ],
-  "license": "empty",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/respoke/node-respoke/issues"
   },
