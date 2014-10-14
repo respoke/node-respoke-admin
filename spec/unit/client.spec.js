@@ -4,22 +4,40 @@ var Respoke = require('../../index');
 var should = require('should');
 var uuid = require('uuid');
 var nock = require('nock');
+var _ = require('lodash');
 var errors = require('../../lib/utils/errors');
+var sinon = require('sinon');
+var events = require('events');
 
 describe('respoke', function () {
     var respoke;
     var nocked;
     var baseDomain = 'http://respoke.test';
     var baseURL = baseDomain + '/v1';
+    var fakeSocket = new events.EventEmitter();
 
-    var createRespoke = function () {
-        return new Respoke({ baseURL: baseURL });
+    var createRespoke = function (opts) {
+        var opts = opts || {};
+        opts = _.defaults(opts, { baseURL: baseURL });
+        return new Respoke(opts);
     };
 
-    var createRespokeWithAuth = function () {
-        var respoke = createRespoke();
+    var createRespokeWithAuth = function (opts) {
+        var opts = opts || {};
+        var respoke;
 
-        respoke.tokens['App-Token'] = uuid.v4();
+        opts['App-Token'] = uuid.v4();
+        respoke = createRespoke(opts);
+
+        return respoke;
+    };
+
+    var createRespokeWithFakeSocket = function (opts) {
+        var opts = opts || {};
+        var respoke;
+
+        opts.socket = fakeSocket;
+        respoke = createRespokeWithAuth(opts);
 
         return respoke;
     };
@@ -323,6 +341,82 @@ describe('respoke', function () {
                         err.should.be.an.instanceof(errors.UnexpectedServerResponseError);
                         should.not.exist(respoke.tokens['Admin-Token']);
                         done();
+                    });
+                });
+            });
+        });
+
+        describe('connect', function () {
+            describe('requires', function () {
+                before(function () {
+                    respoke = createRespokeWithFakeSocket();
+                });
+
+                beforeEach(function () {
+                    respoke.tokens['App-Token'] = null;
+                    respoke.tokens['App-Secret'] = null;
+                    respoke.tokens['Admin-Token'] = null;
+                });
+
+                it('auth tokens', function (done) {
+                    respoke.once('error', function (err) {
+                        should.exist(err);
+                        err.should.be.instanceof(errors.NoAuthenticationTokens);
+                        done();
+                    });
+                    process.nextTick(respoke.auth.connect);
+                });
+
+                it('endpointId for admins', function (done) {
+                    respoke.tokens['App-Secret'] = uuid.v4();
+                    respoke.once('error', function (err) {
+                        should.exist(err);
+                        err.should.be.instanceof(errors.MissingEndpointIdAsAdmin);
+                        done();
+                    });
+                    process.nextTick(respoke.auth.connect);
+                });
+            });
+
+            describe('with no errors', function () {
+                before(function () {
+                    respoke = createRespokeWithFakeSocket();
+                });
+
+                describe('given expected events', function () {
+                    var spy;
+                    var expectedListeners = [
+                        'connect',
+                        'disconnect',
+                        'reconnect',
+                        'reconnecting',
+                        'error',
+                        'connect_error',
+                        'connect_timeout',
+                        'message',
+                        'presence',
+                        'join',
+                        'leave',
+                        'pubsub'
+                    ];
+
+                    before(function () {
+                        spy = sinon.spy(respoke.socket, 'on');
+                        respoke.auth.connect();
+                    });
+
+                    after(function () {
+                        respoke.socket.on.restore();
+                    });
+
+                    it('assigns listeners', function () {
+                        expectedListeners.forEach(function (expectedEvent) {
+                            spy.calledWith(expectedEvent);
+                        });
+                    });
+
+                    it('assigns the correct number of listeners', function () {
+                        spy.callCount.should.equal(expectedListeners.length);
                     });
                 });
             });
