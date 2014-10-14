@@ -12,6 +12,18 @@ describe('respoke', function () {
     var baseDomain = 'http://respoke.test';
     var baseURL = baseDomain + '/v1';
 
+    var createRespoke = function () {
+        return new Respoke({ baseURL: baseURL });
+    };
+
+    var createRespokeWithAuth = function () {
+        var respoke = createRespoke();
+
+        respoke.tokens['App-Token'] = uuid.v4();
+
+        return respoke;
+    };
+
     before(function () {
         nocked = nock(baseDomain);
         nock.disableNetConnect(baseDomain);
@@ -19,9 +31,7 @@ describe('respoke', function () {
 
     describe('Base methods and properties', function () {
         before(function () {
-            respoke = new Respoke({
-                baseURL: baseURL
-            });
+            respoke = createRespoke();
         });
 
         it('has request', function () {
@@ -56,9 +66,7 @@ describe('respoke', function () {
     describe('auth', function () {
         describe('endpoint', function () {
             before(function () {
-                respoke = new Respoke({
-                    baseURL: baseURL
-                });
+                respoke = createRespoke();
             });
 
             it('requires an appId', function (done) {
@@ -146,9 +154,7 @@ describe('respoke', function () {
             var tokenId = uuid.v4();
 
             before(function () {
-                respoke = new Respoke({
-                    baseURL: baseURL
-                });
+                respoke = createRespoke();
             });
 
             beforeEach(function () {
@@ -241,9 +247,7 @@ describe('respoke', function () {
             };
 
             before(function () {
-                respoke = new Respoke({
-                    baseURL: baseURL
-                });
+                respoke = createRespoke();
             });
 
             beforeEach(function () {
@@ -327,10 +331,7 @@ describe('respoke', function () {
 
     describe('apps get', function () {
         before(function () {
-            respoke = new Respoke({
-                baseURL: baseURL,
-                'App-Token': uuid.v4()
-            });
+            respoke = createRespokeWithAuth();
         });
 
         describe('with appId', function () {
@@ -450,10 +451,7 @@ describe('respoke', function () {
 
     describe('roles', function () {
         before(function () {
-            respoke = new Respoke({
-                baseURL: baseURL,
-                'App-Token': uuid.v4()
-            });
+            respoke = createRespoke();
         });
 
         describe('get', function () {
