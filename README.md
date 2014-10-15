@@ -1,168 +1,50 @@
-<!DOCTYPE html><html><head><title>lib/client.js - respoke</title><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"><link rel="stylesheet" href="https://highlightjs.org/static/styles/github.css"><script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script><script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script><script src="https://highlightjs.org/static/highlight.pack.js"></script><script>hljs.initHighlightingOnLoad();</script></head><body><div class="container"><div id="respoke" class="comment"><div><h1 id="-respoke-https-www-respoke-io-for-node"><a href="https://www.respoke.io">Respoke</a> for Node</h1>
-<p><a href="http://badge.fury.io/js/respoke"><img src="https://badge.fury.io/js/respoke.svg" alt="NPM version"></a></p>
-<pre><code class="lang-bash">$   npm install respoke
-</code></pre>
-<p>A general purpose client for communicating with Respoke over REST and web sockets.</p>
-<h4 id="respoke-platform-documentation">Respoke platform documentation</h4>
-<p><a href="https://docs.respoke.io">https://docs.respoke.io</a></p>
-<h4 id="testing-and-development">Testing and development</h4>
-<p>Rename <code>spec/helpers.example.js</code> to <code>spec/helpers.js</code> and put in your credentials.
-That file is excluded from source control.</p>
-<pre><code class="lang-bash">$   npm test
-</code></pre>
-<h4 id="display-verbose-output-during-tests">Display verbose output during tests</h4>
-<pre><code class="lang-bash">$   npm run debug-test
-</code></pre>
-<h4 id="building-and-viewing-the-source-documentation">Building and viewing the source documentation</h4>
-<pre><code class="lang-bash">$   npm run docs
-</code></pre>
-<hr>
-<h2 id="respoke-authentication">Respoke Authentication</h2>
-<p>There are multiple levels of authentication to Respoke, depending on your use case.
-In general, the hierarchy of credentials is as follows:</p>
-<blockquote>
-<ol>
-<li><p>&quot;Admin-Token&quot; (full account administrator)</p>
-</li>
-<li><p>&quot;App-Secret&quot; (app level administration)</p>
-</li>
-<li><p>&quot;App-Token&quot; (endpoint / end user)</p>
-</li>
-</ol>
-</blockquote>
-<hr>
-<h2 id="usage">Usage</h2>
-<h3 id="instantiate-a-client-with-an-app-secret-">Instantiate a client with an <code>App-Secret</code></h3>
-<pre><code> var Respoke = require(&#39;respoke&#39;);
- var respoke = new Respoke({
-     // from the Respoke developer console under one of your apps
-     appId: &quot;XXXX-XXX-XXXXX-XXXX&quot;,
-     &#39;App-Secret&#39;: &#39;XXXX-XXXXX-XXX-XXXXXXXX&#39;
- });
-</code></pre><h3 id="authenticate-as-admin">Authenticate as admin</h3>
-<pre><code> var Respoke = require(&#39;respoke&#39;);
- var respoke = new Respoke();
- respoke.auth.admin({{
-     username: &#39;billy&#39;,
-     password: &#39;asdf&#39;
- }, function (err, authInfo) {
-     if (err) { console.error(err); return; }
 
-     console.log(respoke[&#39;Admin-Token&#39;]); &quot;XXXXXX-XXXX-XXXXXXXXX-XXXX&quot;
- });
-</code></pre><h3 id="obtain-an-access-token">Obtain an access token</h3>
-<pre><code> respoke.auth.endpoint({
-     endpointId: &quot;billy&quot;,
-     roleId: &quot;XXXX-XXX-XXXXX-XXXX&quot;
- }, function (err, authData) {
-     if (err) { console.error(err); return; }
+[![NPM Version](https://badge.fury.io/js/respoke.svg)](https://badge.fury.io/js/respoke)
+[![Build Status](https://travis-ci.org/respoke/node-respoke.svg)](https://travis-ci.org/respoke/node-respoke)
+[![Dependency Status](https://david-dm.org/respoke/node-respoke.svg)](https://david-dm.org/respoke/node-respoke)
+[![devDependency Status](https://david-dm.org/respoke/node-respoke/dev-status.svg)](https://david-dm.org/respoke/node-respoke#info=devDependencies)
 
-     // Now we have a token for an end user to authenticate as an endpoint.
-     console.log(authData.tokenId); // &quot;XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX&quot;
+# node-respoke
 
-     // Instead of returning this `tokenId` to an end user, we can connect
-     // as an endpoint from the server, too.
-     respoke.auth.appAuthSession({ tokenId: authData.tokenId }, function (err, sessionData) {
-         if (err) { console.error(err); return; }
+This wraps the [Respoke][respoke] HTTP and WebSocket API's for use in a Node.js
+app or server.
 
-         // Now we have a session token from `sessionData.token`.
-         // However, for our purposes, there is no need to do anything with it because
-         // the library caches it automatically at `respoke.tokens[&#39;App-Token&#39;]`, and
-         // uses it when it needs it.
-         respoke.auth.connect();
+[respoke]: https://respoke.io "respoke.io"
 
-         // `respoke` is an EventEmitter
-         respoke.on(&#39;connect&#39;, function () {
-             console.log(&#39;connected to respoke!&#39;);
-             respoke.messages.send({
-                 endpointId: &#39;erin&#39;,
-                 message: &#39;Sup yo!&#39;
-             });
-         });
+## Usage
 
-     });
- });
-</code></pre><hr>
-</div><br><h4>Arguments</h4><div class="row hidden-xs param"><div class="col-sm-4">Name</div><div class="col-sm-3">Type</div><div class="col-sm-5"></div></div><div class="row param"><div class="col-sm-4"><code>options</code></div><div class="col-sm-3"><strong>object</strong></div><div class="col-sm-5">Optional</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>options.appId</code></div><div class="col-sm-3"><strong>string</strong></div><div class="col-sm-5">Optional</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>options['Admin-Token']</code></div><div class="col-sm-3"><strong>object</strong></div><div class="col-sm-5">Optional header, if you already authenticated</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>options['App-Secret']</code></div><div class="col-sm-3"><strong>object</strong></div><div class="col-sm-5">Optional header, from Respoke dev console</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>options['App-Token']</code></div><div class="col-sm-3"><strong>object</strong></div><div class="col-sm-5">Optional header, if you already authenticated</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>options.baseURL=https://api.respoke.io/v1</code></div><div class="col-sm-3"><strong>string</strong></div><div class="col-sm-5">Optional</div></div><br class="visible-xs"><br><br><h2>Properties and Methods</h2></div><div id="tokens" class="comment"><h3><code>object</code><a href="#tokens" class="bold"> respoke.tokens</a></h3><div><p>Container object for header tokens.
-These are used when performing REST or web socket requests to Respoke.</p>
-</div><br><br></div><div id="tokens['Admin-Token']" class="comment"><h3><code>string</code><a href="#tokens['Admin-Token']" class="bold"> respoke.tokens['Admin-Token']</a></h3><div><p>Header <code>Admin-Token</code></p>
-</div><br><br></div><div id="tokens['App-Secret']" class="comment"><h3><code>string</code><a href="#tokens['App-Secret']" class="bold"> respoke.tokens['App-Secret']</a></h3><div><p>Header <code>App-Secret</code></p>
-</div><br><br></div><div id="tokens['App-Token']" class="comment"><h3><code>string</code><a href="#tokens['App-Token']" class="bold"> respoke.tokens['App-Token']</a></h3><div><p>Header <code>App-Token</code></p>
-</div><br><br></div><div id="appId" class="comment"><h3><code>string</code><a href="#appId" class="bold"> respoke.appId</a></h3><div><p>App id</p>
-</div><br><br></div><div id="connectionId" class="comment"><h3><code>string</code><a href="#connectionId" class="bold"> respoke.connectionId</a></h3><div><p>If connected, this is the web socket connection ID with Respoke.</p>
-</div><br><br></div><div id="endpointId" class="comment"><h3><code>string</code><a href="#endpointId" class="bold"> respoke.endpointId</a></h3><div><p>If connected, this is the endpointId.</p>
-</div><br><br></div><div id="baseURL" class="comment"><h3><code>string</code><a href="#baseURL" class="bold"> respoke.baseURL</a></h3><div><p>The base respoke api to use. In most circumstances there is no reason
-to change this.</p>
-<p>It should include the API version with no trailing <code>/</code>.</p>
-<p><code>https://api.respoke.io/v1</code></p>
-</div><br><br></div><div id="request" class="comment"><h3><a href="#request"><span class="bold"> respoke.request(params, callback)</span></a></h3><div><p>General purpose method for doing a REST call to Respoke.</p>
-</div><br><h4>Arguments</h4><div class="row hidden-xs param"><div class="col-sm-4">Name</div><div class="col-sm-3">Type</div><div class="col-sm-5"></div></div><div class="row param"><div class="col-sm-4"><code>params</code></div><div class="col-sm-3"><strong>object</strong></div><div class="col-sm-5"></div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>params.body</code></div><div class="col-sm-3"><strong>object</strong></div><div class="col-sm-5"></div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>params.json=true</code></div><div class="col-sm-3"><strong>boolean</strong></div><div class="col-sm-5"></div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>params.headers=self.tokens</code></div><div class="col-sm-3"><strong>object</strong></div><div class="col-sm-5"></div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>callback</code></div><div class="col-sm-3"><strong>function</strong></div><div class="col-sm-5">(err, body)</div></div><br class="visible-xs"><br><br></div><div id="auth" class="comment"><h3><code>object</code><a href="#auth" class="bold"> respoke.auth</a></h3><div><p>Namespace object. The methods at <code>respoke.auth</code> are used for
-obtaining auth credentials and connecting with Respoke.</p>
-</div><br><br></div><div id="auth-endpoint" class="comment"><h3><a href="#auth.endpoint"><span class="bold"> respoke.auth.endpoint(opts, callback)</span></a></h3><p><span class="label label-default">app-secret</span>&nbsp;<span class="label label-default">rest</span>&nbsp;</p><div><p>As an admin (with <code>respoke.tokens[&#39;App-Token&#39;]</code> or <code>respoke.tokens[&#39;App-Secret&#39;]</code>),
-obtain an <code>appAuthSessionId</code> which can be used to authenticate to Respoke as
-an endpoint.</p>
-<pre><code> respoke.auth.endpoint({
-     endpointId: &quot;user-billy&quot;,
-     roleId: &quot;XXXX-XXX-XXXXX-XXXX&quot;
- }, function (err, authData) {
-     if (err) { console.error(err); return; }
+Install using npm.
 
-     console.log(authData.tokenId); // &quot;XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX&quot;
- });
-</code></pre></div><br><h4>Arguments</h4><div class="row hidden-xs param"><div class="col-sm-4">Name</div><div class="col-sm-3">Type</div><div class="col-sm-5"></div></div><div class="row param"><div class="col-sm-4"><code>opts</code></div><div class="col-sm-3"><strong>object</strong></div><div class="col-sm-5"></div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>opts.appId</code></div><div class="col-sm-3"><strong>object</strong></div><div class="col-sm-5">required</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>opts.endpointId</code></div><div class="col-sm-3"><strong>object</strong></div><div class="col-sm-5">required</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>opts.roleId</code></div><div class="col-sm-3"><strong>object</strong></div><div class="col-sm-5">required unless app is in development mode</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>opts.ttl=86400</code></div><div class="col-sm-3"><strong>object</strong></div><div class="col-sm-5">optional seconds time-to-live</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>opts.headers['App-Secret']</code></div><div class="col-sm-3"><strong>object</strong></div><div class="col-sm-5">optional; override cached token</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>opts.headers['Admin-Token']</code></div><div class="col-sm-3"><strong>object</strong></div><div class="col-sm-5">optional; override cached token</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>callback</code></div><div class="col-sm-3"><strong>function</strong></div><div class="col-sm-5">(err, clientAuthData)</div></div><br class="visible-xs"><br><br></div><div id="auth-sessionToken" class="comment"><h3><a href="#auth.sessionToken"><span class="bold"> respoke.auth.sessionToken(opts, callback)</span></a></h3><p><span class="label label-default">app-secret</span>&nbsp;<span class="label label-default">rest</span>&nbsp;</p><div><p>As an endpoint, obtain an app auth session. This creates a session for the user
-to connect to your Respoke app.</p>
-<p>Upon successful authentication, it sets the property <code>respoke.tokens[&#39;App-Token&#39;]</code>
-which will be used during HTTP requests, or to establish a web socket.
-<code>{ token: &#39;XXXX-XXX-XXXXX-XXXX&#39; }</code></p>
-<p>In most cases, you will immediately call <code>.connect()</code> to initiate the web socket.</p>
-</div><br><h4>Arguments</h4><div class="row hidden-xs param"><div class="col-sm-4">Name</div><div class="col-sm-3">Type</div><div class="col-sm-5"></div></div><div class="row param"><div class="col-sm-4"><code>opts</code></div><div class="col-sm-3"><strong>object</strong></div><div class="col-sm-5">required</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>[opts.tokenId]</code></div><div class="col-sm-3"><strong>string</strong></div><div class="col-sm-5">required</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>callback</code></div><div class="col-sm-3"><strong>function</strong></div><div class="col-sm-5">(err, body)</div></div><br class="visible-xs"><br><br></div><div id="auth-connect" class="comment"><h3><a href="#auth.connect"><span class="bold"> respoke.auth.connect(opts)</span></a></h3><p><span class="label label-default">app-token</span>&nbsp;</p><div><p>Connect as a web socket client using the highest authentication token
-currently available.</p>
-<p>After calling this, attach event listeners such as
-<code>respoke.on(&#39;connect&#39;)</code> and <code>respoke.on(&#39;error&#39;)</code>.</p>
-</div><br><h4>Arguments</h4><div class="row hidden-xs param"><div class="col-sm-4">Name</div><div class="col-sm-3">Type</div><div class="col-sm-5"></div></div><div class="row param"><div class="col-sm-4"><code>opts</code></div><div class="col-sm-3"><strong>object</strong></div><div class="col-sm-5">optional</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>opts.endpointId</code></div><div class="col-sm-3"><strong>string</strong></div><div class="col-sm-5">required if not connecting using App-Token</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>opts['Admin-Token']</code></div><div class="col-sm-3"><strong>string</strong></div><div class="col-sm-5">optional</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>opts['App-Secret']</code></div><div class="col-sm-3"><strong>string</strong></div><div class="col-sm-5">optional</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>opts['App-Token']</code></div><div class="col-sm-3"><strong>string</strong></div><div class="col-sm-5">optional</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>opts.connectParams</code></div><div class="col-sm-3"><strong>object</strong></div><div class="col-sm-5">optional Socket.io connection parameters</div></div><br class="visible-xs"><br><br></div><div id="auth-admin" class="comment"><h3><a href="#auth.admin"><span class="bold"> respoke.auth.admin(opts, callback)</span></a></h3><p><span class="label label-default">rest</span>&nbsp;</p><div><p>Authenticate with full admin privileges. This is not a recommended auth strategy
-and should only be used in rare circustances when <code>App-Secret</code> auth is not
-enough.</p>
-<p>Upon successful authentication, it sets the property <code>respoke.tokens[&#39;Admin-Token&#39;]</code>
-which will be used during HTTP requests or to establish a web socket.
-<code>{ token: &#39;XXXX-XXX-XXXXX-XX&#39; }</code></p>
-</div><br><h4>Arguments</h4><div class="row hidden-xs param"><div class="col-sm-4">Name</div><div class="col-sm-3">Type</div><div class="col-sm-5"></div></div><div class="row param"><div class="col-sm-4"><code>opts</code></div><div class="col-sm-3"><strong>object</strong></div><div class="col-sm-5">Required</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>opts.username</code></div><div class="col-sm-3"><strong>string</strong></div><div class="col-sm-5"></div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>opts.password</code></div><div class="col-sm-3"><strong>string</strong></div><div class="col-sm-5"></div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>callback</code></div><div class="col-sm-3"><strong>function</strong></div><div class="col-sm-5">(err, body)</div></div><br class="visible-xs"><br><br></div><div id="wsCall" class="comment"><h3><a href="#wsCall"><span class="bold"> respoke.wsCall(httpMethod, urlPath, data, callback)</span></a></h3><p><span class="label label-default">endpoint</span>&nbsp;<span class="label label-default">web-socket</span>&nbsp;</p><div><p>Make a general purpose web socket call over the active <code>.socket</code>.</p>
-</div><br><h4>Arguments</h4><div class="row hidden-xs param"><div class="col-sm-4">Name</div><div class="col-sm-3">Type</div><div class="col-sm-5"></div></div><div class="row param"><div class="col-sm-4"><code>httpMethod</code></div><div class="col-sm-3"><strong>string</strong></div><div class="col-sm-5"></div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>urlPath</code></div><div class="col-sm-3"><strong>string</strong></div><div class="col-sm-5">Relative to `baseUrl`</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>data</code></div><div class="col-sm-3"><strong>object</strong></div><div class="col-sm-5">Optional; to be sent over web socket</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>[data.headers]</code></div><div class="col-sm-3"><strong>object</strong></div><div class="col-sm-5">Optional WS header object</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>callback</code></div><div class="col-sm-3"><strong>function</strong></div><div class="col-sm-5"></div></div><br class="visible-xs"><br><br></div><div id="close" class="comment"><h3><a href="#close"><span class="bold"> respoke.close(callback)</span></a></h3><div><p>Delete the app auth session, disconnect the web socket, and remove all listeners.</p>
-</div><br><h4>Arguments</h4><div class="row hidden-xs param"><div class="col-sm-4">Name</div><div class="col-sm-3">Type</div><div class="col-sm-5"></div></div><div class="row param"><div class="col-sm-4"><code>callback</code></div><div class="col-sm-3"><strong>function</strong></div><div class="col-sm-5">(err)</div></div><br class="visible-xs"><br><br></div><div id="presence" class="comment"><h3><code>object</code><a href="#presence" class="bold"> respoke.presence</a></h3><div><p>Namespace object. Methods for interacting with presence indication.</p>
-</div><br><br></div><div id="presence-observe" class="comment"><h3><a href="#presence.observe"><span class="bold"> respoke.presence.observe(endpoints, callback)</span></a></h3><p><span class="label label-default">endpoint</span>&nbsp;<span class="label label-default">web socket</span>&nbsp;</p><div><p>Register as an observer of presence for the specified endpoint ids.</p>
-</div><br><h4>Arguments</h4><div class="row hidden-xs param"><div class="col-sm-4">Name</div><div class="col-sm-3">Type</div><div class="col-sm-5"></div></div><div class="row param"><div class="col-sm-4"><code>endpoints</code></div><div class="col-sm-3"><strong>array&lt;string&gt;</strong></div><div class="col-sm-5"></div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>callback</code></div><div class="col-sm-3"><strong>function</strong></div><div class="col-sm-5"></div></div><br class="visible-xs"><br><br></div><div id="presence-set" class="comment"><h3><a href="#presence.set"><span class="bold"> respoke.presence.set(params, callback)</span></a></h3><p><span class="label label-default">endpoint</span>&nbsp;<span class="label label-default">web socket</span>&nbsp;</p><div><p>Set your own presence.</p>
-</div><br><h4>Arguments</h4><div class="row hidden-xs param"><div class="col-sm-4">Name</div><div class="col-sm-3">Type</div><div class="col-sm-5"></div></div><div class="row param"><div class="col-sm-4"><code>params</code></div><div class="col-sm-3"><strong>object</strong></div><div class="col-sm-5"></div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>params.presence</code></div><div class="col-sm-3"><strong>string, number, object, array</strong></div><div class="col-sm-5">Your presence object. Format varies,
-depending on how your application decides to implement presence.</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>params.status</code></div><div class="col-sm-3"><strong>string</strong></div><div class="col-sm-5">Human readable status message.</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>callback</code></div><div class="col-sm-3"><strong>function</strong></div><div class="col-sm-5"></div></div><br class="visible-xs"><br><br></div><div id="messages" class="comment"><h3><code>object</code><a href="#messages" class="bold"> respoke.messages</a></h3><div><p>Namespace object. Messaging.</p>
-</div><br><br></div><div id="messages-send" class="comment"><h3><a href="#messages.send"><span class="bold"> respoke.messages.send(params)</span></a></h3><p><span class="label label-default">endpoint</span>&nbsp;<span class="label label-default">web socket</span>&nbsp;</p><div><p>Send a message to an endpoint or specific connection of an endpoint.</p>
-<p>Only one of these is required.</p>
-<ul>
-<li><code>params.endpointId</code></li>
-<li><code>params.connectionId</code></li>
-</ul>
-</div><br><h4>Arguments</h4><div class="row hidden-xs param"><div class="col-sm-4">Name</div><div class="col-sm-3">Type</div><div class="col-sm-5"></div></div><div class="row param"><div class="col-sm-4"><code>params</code></div><div class="col-sm-3"><strong>object</strong></div><div class="col-sm-5"></div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>params.to</code></div><div class="col-sm-3"><strong>string</strong></div><div class="col-sm-5">endpointId</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>params.connectionId</code></div><div class="col-sm-3"><strong>string</strong></div><div class="col-sm-5">optional</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>params.message</code></div><div class="col-sm-3"><strong>string</strong></div><div class="col-sm-5">required</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>params.type='message'</code></div><div class="col-sm-3"><strong>string</strong></div><div class="col-sm-5">optional</div></div><br class="visible-xs"><br><br></div><div id="groups" class="comment"><h3><code>object</code><a href="#groups" class="bold"> respoke.groups</a></h3><div><p>Namespace object. Groups.</p>
-</div><br><br></div><div id="groups-publish" class="comment"><h3><a href="#groups.publish"><span class="bold"> respoke.groups.publish(params)</span></a></h3><p><span class="label label-default">endpoint</span>&nbsp;<span class="label label-default">web-socket</span>&nbsp;</p><div><p>Send a message to a group.</p>
-</div><br><h4>Arguments</h4><div class="row hidden-xs param"><div class="col-sm-4">Name</div><div class="col-sm-3">Type</div><div class="col-sm-5"></div></div><div class="row param"><div class="col-sm-4"><code>params</code></div><div class="col-sm-3"><strong>object</strong></div><div class="col-sm-5"></div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>params.groupId</code></div><div class="col-sm-3"><strong>string</strong></div><div class="col-sm-5"></div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>params.message</code></div><div class="col-sm-3"><strong>string</strong></div><div class="col-sm-5"></div></div><br class="visible-xs"><br><br></div><div id="groups-getSubscribers" class="comment"><h3><a href="#groups.getSubscribers"><span class="bold"> respoke.groups.getSubscribers(params, callback)</span></a></h3><p><span class="label label-default">endpoint</span>&nbsp;<span class="label label-default">web-socket</span>&nbsp;</p><div><p>Get the members of a group.</p>
-</div><br><h4>Arguments</h4><div class="row hidden-xs param"><div class="col-sm-4">Name</div><div class="col-sm-3">Type</div><div class="col-sm-5"></div></div><div class="row param"><div class="col-sm-4"><code>params</code></div><div class="col-sm-3"><strong>object</strong></div><div class="col-sm-5"></div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>params.groupId</code></div><div class="col-sm-3"><strong>string</strong></div><div class="col-sm-5"></div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>callback</code></div><div class="col-sm-3"><strong>function</strong></div><div class="col-sm-5"></div></div><br class="visible-xs"><br><br></div><div id="groups-join" class="comment"><h3><a href="#groups.join"><span class="bold"> respoke.groups.join(params, callback)</span></a></h3><p><span class="label label-default">endpoint</span>&nbsp;<span class="label label-default">web-socket</span>&nbsp;</p><div><p>Join a group.</p>
-</div><br><h4>Arguments</h4><div class="row hidden-xs param"><div class="col-sm-4">Name</div><div class="col-sm-3">Type</div><div class="col-sm-5"></div></div><div class="row param"><div class="col-sm-4"><code>params</code></div><div class="col-sm-3"><strong>object</strong></div><div class="col-sm-5"></div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>params.groupId</code></div><div class="col-sm-3"><strong>string</strong></div><div class="col-sm-5"></div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>callback</code></div><div class="col-sm-3"><strong>function</strong></div><div class="col-sm-5"></div></div><br class="visible-xs"><br><br></div><div id="groups-leave" class="comment"><h3><a href="#groups.leave"><span class="bold"> respoke.groups.leave(params, callback)</span></a></h3><p><span class="label label-default">endpoint</span>&nbsp;<span class="label label-default">web-socket</span>&nbsp;</p><div><p>Leave a group.</p>
-</div><br><h4>Arguments</h4><div class="row hidden-xs param"><div class="col-sm-4">Name</div><div class="col-sm-3">Type</div><div class="col-sm-5"></div></div><div class="row param"><div class="col-sm-4"><code>params</code></div><div class="col-sm-3"><strong>object</strong></div><div class="col-sm-5"></div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>params.groupId</code></div><div class="col-sm-3"><strong>string</strong></div><div class="col-sm-5"></div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>params.endpointId</code></div><div class="col-sm-3"><strong>string</strong></div><div class="col-sm-5">optional</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>callback</code></div><div class="col-sm-3"><strong>function</strong></div><div class="col-sm-5"></div></div><br class="visible-xs"><br><br></div><div id="apps" class="comment"><h3><code>object</code><a href="#apps" class="bold"> respoke.apps</a></h3><div><p>Namespace object. For full admin only.</p>
-</div><br><br></div><div id="apps-get" class="comment"><h3><a href="#apps.get"><span class="bold"> respoke.apps.get(opts, callback)</span></a></h3><p><span class="label label-default">admin-token</span>&nbsp;<span class="label label-default">rest</span>&nbsp;</p><div><p>Get an app by <code>opts.appId</code>, or get all apps when <code>opts.appId</code> is not supplied.</p>
-</div><br><h4>Arguments</h4><div class="row hidden-xs param"><div class="col-sm-4">Name</div><div class="col-sm-3">Type</div><div class="col-sm-5"></div></div><div class="row param"><div class="col-sm-4"><code>opts</code></div><div class="col-sm-3"><strong>object</strong></div><div class="col-sm-5">optional</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>[opts.appId]</code></div><div class="col-sm-3"><strong>string</strong></div><div class="col-sm-5">optional</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>[opts.headers]</code></div><div class="col-sm-3"><strong>object</strong></div><div class="col-sm-5">optional</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>callback</code></div><div class="col-sm-3"><strong>function</strong></div><div class="col-sm-5">(err, app)</div></div><br class="visible-xs"><br><br></div><div id="roles" class="comment"><h3><code>object</code><a href="#roles" class="bold"> respoke.roles</a></h3><div><p>Namespace object. For full admin only.</p>
-</div><br><br></div><div id="roles-get" class="comment"><h3><a href="#roles.get"><span class="bold"> respoke.roles.get(options, callback(err,)</span></a></h3><div><p>Retrieve a security role</p>
-</div><br><h4>Arguments</h4><div class="row hidden-xs param"><div class="col-sm-4">Name</div><div class="col-sm-3">Type</div><div class="col-sm-5"></div></div><div class="row param"><div class="col-sm-4"><code>options</code></div><div class="col-sm-3"><strong>object</strong></div><div class="col-sm-5">optional</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>[options.roleId]</code></div><div class="col-sm-3"><strong>string</strong></div><div class="col-sm-5">optional</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>callback(err,</code></div><div class="col-sm-3"><strong>function</strong></div><div class="col-sm-5">role)</div></div><br class="visible-xs"><br><br></div><div id="roles-create" class="comment"><h3><a href="#roles.create"><span class="bold"> respoke.roles.create(role, opts, callback(err,)</span></a></h3><div><p>Create a security role.</p>
-<p>The callback data object contains the <code>id</code> of the created role,
-which can be used for authenticating endpoints.</p>
-</div><br><h4>Arguments</h4><div class="row hidden-xs param"><div class="col-sm-4">Name</div><div class="col-sm-3">Type</div><div class="col-sm-5"></div></div><div class="row param"><div class="col-sm-4"><code>role</code></div><div class="col-sm-3"><strong>object</strong></div><div class="col-sm-5">the role to create</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>[role.appId]</code></div><div class="col-sm-3"><strong>string</strong></div><div class="col-sm-5">required</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>[role.name]</code></div><div class="col-sm-3"><strong>string</strong></div><div class="col-sm-5">required</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>opts</code></div><div class="col-sm-3"><strong>object</strong></div><div class="col-sm-5">optional request opts</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>[opts.headers]</code></div><div class="col-sm-3"><strong>object</strong></div><div class="col-sm-5">optional</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>callback(err,</code></div><div class="col-sm-3"><strong>function</strong></div><div class="col-sm-5">createdRole)</div></div><br class="visible-xs"><br><br></div><div id="roles-delete" class="comment"><h3><a href="#roles.delete"><span class="bold"> respoke.roles.delete(opts, callback(err))</span></a></h3><div><p>Remove a security role.</p>
-</div><br><h4>Arguments</h4><div class="row hidden-xs param"><div class="col-sm-4">Name</div><div class="col-sm-3">Type</div><div class="col-sm-5"></div></div><div class="row param"><div class="col-sm-4"><code>opts</code></div><div class="col-sm-3"><strong>object</strong></div><div class="col-sm-5">required</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>[opts.roleId]</code></div><div class="col-sm-3"><strong>string</strong></div><div class="col-sm-5">required</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>[opts.headers]</code></div><div class="col-sm-3"><strong>object</strong></div><div class="col-sm-5">optional</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>callback(err)</code></div><div class="col-sm-3"><strong>function</strong></div><div class="col-sm-5"></div></div><br class="visible-xs"><br><br></div><br><br><h2>Events</h2><p>Listen for events on an instance of this class.</p><pre><code>respoke.on('event-name', function (arg) {
- 
-});</code></pre><br><div id="event-connect"><h3><code>event</code> <a href="#event-connect" class="bold">connect</a></h3><div><p>Connected to respoke.</p>
-</div><br><br></div><div id="event-disconnect"><h3><code>event</code> <a href="#event-disconnect" class="bold">disconnect</a></h3><div><p>Disconnected from respoke.</p>
-</div><br><br></div><div id="event-reconnect"><h3><code>event</code> <a href="#event-reconnect" class="bold">reconnect</a></h3><div><p>Reconnected with respoke.</p>
-</div><br><h4>Callback Arguments</h4><div class="row hidden-xs param"><div class="col-sm-4">Name</div><div class="col-sm-3">Type</div><div class="col-sm-5"></div></div><div class="row param"><div class="col-sm-4"><code>num</code></div><div class="col-sm-3"><strong>number</strong></div><div class="col-sm-5"></div></div><br class="visible-xs"><br><br></div><div id="event-reconnecting"><h3><code>event</code> <a href="#event-reconnecting" class="bold">reconnecting</a></h3><div><p>Reconnecting with respoke.</p>
-</div><br><h4>Callback Arguments</h4><div class="row hidden-xs param"><div class="col-sm-4">Name</div><div class="col-sm-3">Type</div><div class="col-sm-5"></div></div><div class="row param"><div class="col-sm-4"><code>num</code></div><div class="col-sm-3"><strong>number</strong></div><div class="col-sm-5"></div></div><br class="visible-xs"><br><br></div><div id="event-error"><h3><code>event</code> <a href="#event-error" class="bold">error</a></h3><div><p>An error occurred.</p>
-</div><br><h4>Callback Arguments</h4><div class="row hidden-xs param"><div class="col-sm-4">Name</div><div class="col-sm-3">Type</div><div class="col-sm-5"></div></div><div class="row param"><div class="col-sm-4"><code>err</code></div><div class="col-sm-3"><strong>error</strong></div><div class="col-sm-5"></div></div><br class="visible-xs"><br><br></div><div id="event-connect_error"><h3><code>event</code> <a href="#event-connect_error" class="bold">connect_error</a></h3><div><p>An error occurred while trying to connect.</p>
-</div><br><h4>Callback Arguments</h4><div class="row hidden-xs param"><div class="col-sm-4">Name</div><div class="col-sm-3">Type</div><div class="col-sm-5"></div></div><div class="row param"><div class="col-sm-4"><code>err</code></div><div class="col-sm-3"><strong>error</strong></div><div class="col-sm-5"></div></div><br class="visible-xs"><br><br></div><div id="event-connect_timeout"><h3><code>event</code> <a href="#event-connect_timeout" class="bold">connect_timeout</a></h3><div><p>A connection timeout.</p>
-</div><br><br></div><div id="event-message"><h3><code>event</code> <a href="#event-message" class="bold">message</a></h3><div><p>There is an incoming private message, from an endpoint.</p>
-</div><br><h4>Callback Arguments</h4><div class="row hidden-xs param"><div class="col-sm-4">Name</div><div class="col-sm-3">Type</div><div class="col-sm-5"></div></div><div class="row param"><div class="col-sm-4"><code>msg</code></div><div class="col-sm-3"><strong>object</strong></div><div class="col-sm-5"></div></div><br class="visible-xs"><br><br></div><div id="event-presence"><h3><code>event</code> <a href="#event-presence" class="bold">presence</a></h3><div><p>Presence for an endpoint has changed or is now available.</p>
-</div><br><h4>Callback Arguments</h4><div class="row hidden-xs param"><div class="col-sm-4">Name</div><div class="col-sm-3">Type</div><div class="col-sm-5"></div></div><div class="row param"><div class="col-sm-4"><code>res</code></div><div class="col-sm-3"><strong>object</strong></div><div class="col-sm-5"></div></div><br class="visible-xs"><br><br></div><div id="event-join"><h3><code>event</code> <a href="#event-join" class="bold">join</a></h3><div><p>An endpoint (which can include this client) has joined a group.</p>
-</div><br><h4>Callback Arguments</h4><div class="row hidden-xs param"><div class="col-sm-4">Name</div><div class="col-sm-3">Type</div><div class="col-sm-5"></div></div><div class="row param"><div class="col-sm-4"><code>res</code></div><div class="col-sm-3"><strong>object</strong></div><div class="col-sm-5"></div></div><br class="visible-xs"><br><br></div><div id="event-leave"><h3><code>event</code> <a href="#event-leave" class="bold">leave</a></h3><div><p>An endpoint (which can include this client) has left a group.</p>
-</div><br><h4>Callback Arguments</h4><div class="row hidden-xs param"><div class="col-sm-4">Name</div><div class="col-sm-3">Type</div><div class="col-sm-5"></div></div><div class="row param"><div class="col-sm-4"><code>res</code></div><div class="col-sm-3"><strong>object</strong></div><div class="col-sm-5"></div></div><br class="visible-xs"><br><br></div><div id="event-pubsub"><h3><code>event</code> <a href="#event-pubsub" class="bold">pubsub</a></h3><div><p>A group message has been received.</p>
-</div><br><h4>Callback Arguments</h4><div class="row hidden-xs param"><div class="col-sm-4">Name</div><div class="col-sm-3">Type</div><div class="col-sm-5"></div></div><div class="row param"><div class="col-sm-4"><code>res</code></div><div class="col-sm-3"><strong>object</strong></div><div class="col-sm-5"></div></div><br class="visible-xs"><br><br></div></div></body></html>
+    npm install --save respoke
+
+For more details on the node-respoke API see the
+[project documentation][node-respoke]. For more on the Respoke service and how
+it works see the [full documentation][respoke-docs].
+
+[node-respoke]: https://respoke.github.io/node-respoke "node-respoke documentation"
+[respoke-docs]: https://docs.respoke.io "full respoke documentation"
+
+## License
+
+This software is licensed under the [MIT license](http://opensource.org/licenses/MIT).
+
+> Copyright (c) 2014 Digium, Inc.
+>
+> Permission is hereby granted, free of charge, to any person obtaining a copy
+> of this software and associated documentation files (the "Software"), to
+> deal in the Software without restriction, including without limitation the
+> rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+> sell copies of the Software, and to permit persons to whom the Software is
+> furnished to do so, subject to the following conditions:
+>
+> The above copyright notice and this permission notice shall be included in
+> all copies or substantial portions of the Software.
+>
+> THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+> IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+> FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+> AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+> LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+> FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+> IN THE SOFTWARE.
+>
