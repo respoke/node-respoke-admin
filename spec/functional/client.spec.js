@@ -43,28 +43,30 @@ describe('Respoke functional', function () {
                 endpointId: 'billy',
                 appId: helpers.appId,
                 roleId: helpers.roleId
-            }, function (err, body) {
-                if (err) {
-                    return done(err);
-                }
-
+            }).then(function (body) {
                 body.tokenId.should.be.a.String;
 
+                return body.tokenId;
+            }).then(function (tokenId) {
                 respoke.auth.sessionToken({
-                    tokenId: body.tokenId
-                }, function (err, sessionData) {
-                    if (err) {
-                        return done(err);
-                    }
+                    tokenId: tokenId
+                }).then(function (sessionData) {
                     respoke.tokens['App-Token'].should.be.a.String;
-                    respoke.auth.connect({
-                        endpointId: 'billy'
-                    });
-                    respoke.on('connect', function () {
+                    respoke.on('connect', function (err, res) {
                         respoke.close(done);
                     });
                     respoke.on('error', done);
+
+                    process.nextTick(function () {
+                        respoke.auth.connect({
+                            endpointId: 'billy'
+                        });
+                    });
+                }).catch(function (error) {
+                    done(error);
                 });
+            }).catch(function (error) {
+                done(error);
             });
         });
     });
