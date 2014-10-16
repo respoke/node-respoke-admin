@@ -78,7 +78,7 @@ describe('respoke', function () {
             respoke.roles.should.be.an.Object;
             respoke.apps.should.be.an.Object;
             respoke.presence.should.be.an.Object;
-            });
+        });
     });
 
     describe('auth', function () {
