@@ -178,8 +178,6 @@ describe('Respoke functional', function () {
                     client1.on('error', done);
                 });
             });
-            
-
 
             client2 = new Respoke({
                 baseURL: helpers.baseURL,
@@ -220,7 +218,7 @@ describe('Respoke functional', function () {
             };
             if (client1.connectionId) {
                 client1.close(handler);
-            } 
+            }
             else {
                 createdClients++;
                 handler();
@@ -238,7 +236,7 @@ describe('Respoke functional', function () {
         it('sends and receives messages', function (done) {
             var msgText = "Hey - " + uuid.v4();
 
-            client2.on('message', function (data) {
+            client2.once('message', function (data) {
                 data.header.type.should.equal('message');
                 data.header.from.should.equal(endpointId1);
                 data.body.should.equal(msgText);
