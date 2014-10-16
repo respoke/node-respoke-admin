@@ -1,3 +1,5 @@
+'use strict';
+
 exports = module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('jsdoxy');
@@ -5,6 +7,7 @@ exports = module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-http-server');
     grunt.loadNpmTasks('grunt-open');
+    grunt.loadNpmTasks('grunt-gh-pages');
 
     grunt.initConfig({
         jshint: {
@@ -29,9 +32,15 @@ exports = module.exports = function (grunt) {
         copy: {
             build: {
                 files: {
-                    './README.md': './docs/respoke.html'
+                    '.tmp/index.html': './docs/respoke.html'
                 }
             }
+        },
+        'gh-pages': {
+            options: {
+                base: '.tmp'
+            },
+            src: ['**']
         },
         watch: {
             docs: {
@@ -67,15 +76,20 @@ exports = module.exports = function (grunt) {
     });
 
     grunt.registerTask('docs', [
-        'jsdoxy',
+        'jsdoxy'
+    ]);
+
+    grunt.registerTask('docs:serve', [
+        'docs',
         'http-server:docs',
         'open:docs',
         'watch'
     ]);
 
-    grunt.registerTask('build', [
+    grunt.registerTask('docs:publish', [
         'jshint',
-        'jsdoxy',
-        'copy:build'
+        'docs',
+        'copy',
+        'gh-pages'
     ]);
 };

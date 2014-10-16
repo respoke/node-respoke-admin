@@ -7,7 +7,7 @@
 doctype html
 html
   head
-    title=subTitle + " - " + title 
+    title=subTitle + " - " + title
     link(rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css")
     link(rel="stylesheet" href="https://highlightjs.org/static/styles/github.css")
     script(src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js")
@@ -42,11 +42,11 @@ html
               - var returnStringArray = tag.string.split( /\{|\}/g );
               - if (!returnStringArray[0]) returnStringArray.shift();
               - comment.returns = returnStringArray[0];
-            else if (tag.type === "augments" && tag.otherClass) 
+            else if (tag.type === "augments" && tag.otherClass)
               - comment.augments = tag.otherClass
             else if (tag.type === "auth")
               - comment.auth = tag.string.split(', ')
-          
+
           - if (comment.ctx.name == className) classComment = comment;
           - else if (comment.ctx.type === 'event') publicEvents.push(comment);
           - else
@@ -54,13 +54,13 @@ html
               - var commentPrefix = comment.ctx.receiver.split('.');
               - commentPrefix.shift()
               - comment.ctx.name = commentPrefix.join('.') + '.' + comment.ctx.name;
-            - publicComments.push(comment);   
+            - publicComments.push(comment);
 
       - publicComments.unshift(classComment);
 
 
       //- Properties and methods
-      
+
 
       each comment, indx in publicComments
         .comment(id=comment.ctx.name.replace('.','-'))
@@ -80,7 +80,7 @@ html
             h3: a(href="#"+comment.ctx.name)
               span.bold= " " + className + "." + comment.ctx.name + "(" + comment.argumentArray.join(', ') + ")"
             if (comment.returns)
-              p: strong returns 
+              p: strong returns
                 code= comment.returns || "undefined"
 
 
@@ -91,7 +91,7 @@ html
 
           if (comment.fires && comment.fires.length)
             p
-              strong fires 
+              strong fires
               code= comment.fires.map(function(f){ return f.replace(className + '#','') }).join('|')
 
           if (comment.auth)
@@ -110,8 +110,8 @@ html
             .row.hidden-xs.param
               .col-sm-4 Name
               .col-sm-3 Type
-              .col-sm-5 
-            
+              .col-sm-5
+
             each param in comment.methodParams
               .row.param
                 .col-sm-4: code= param.name
@@ -124,9 +124,9 @@ html
           if (indx === 0)
             h2 Properties and Methods
 
-          //- 
+          //-
           //- Uncomment for devving!!!
-          //- 
+          //-
           //- a(href="javascript:void(0)" onclick="this.nextSibling.style.display = this.nextSibling.style.display == 'block' ? 'none' : 'block'") JSON
           //- pre(style="display:none")
           //-   code=JSON.stringify(comment, null, 4)
@@ -153,7 +153,7 @@ html
 
             - var eventLinkId = "event-" + comment.ctx.name.replace('.','-').replace('#','-');
             div(id=eventLinkId)
-              
+
               h3
                 code= comment.ctx.type
                 = " "
@@ -168,8 +168,8 @@ html
                 .row.hidden-xs.param
                   .col-sm-4 Name
                   .col-sm-3 Type
-                  .col-sm-5 
-                
+                  .col-sm-5
+
                 each param in comment.eventPropertyArray
                   .row.param
                     .col-sm-4: code= param.name
@@ -180,13 +180,13 @@ html
               br
               br
 
-              //- 
-              //- 
+              //-
+              //-
               //- Uncomment for devving!!!
-              //- 
-              //- 
+              //-
+              //-
               //- a(href="javascript:void(0)" onclick="this.nextSibling.style.display = this.nextSibling.style.display == 'block' ? 'none' : 'block'") JSON
               //- pre(style="display:none")
               //-   code=JSON.stringify(comment, null, 4)
-          
+
 

@@ -4,3 +4,5 @@ spec/helpers.js
 .DS_Store
 docs/
 coverage/
+.tmp/
+.grunt/
