@@ -24,6 +24,31 @@ it works see the [full documentation][respoke-docs].
 [node-respoke]: https://respoke.github.io/node-respoke "node-respoke documentation"
 [respoke-docs]: https://docs.respoke.io "full respoke documentation"
 
+## Testing
+
+Before you can run the functional tests you will need to complete the following
+steps.
+
+- create a test app in the your admin portal at [respoke.io][respoke]
+- turn *off* dev mode
+- create a new blank role (name value is not important)
+- `cp spec/helpers.example.js spec/helpers.js`
+- fill in the information in the `spec/helpers.js` file
+
+There are several commands to run the tests.
+
+    # run all tests
+    npm test
+
+    # run all tests with extra debug output
+    npm run debug-test
+
+    # run only unit tests
+    npm run unit
+
+    # run only functional tests
+    npm run functional
+
 ## License
 
 This software is licensed under the [MIT license](http://opensource.org/licenses/MIT).
