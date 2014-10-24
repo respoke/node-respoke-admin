@@ -1,53 +1,13 @@
 'use strict';
-var Respoke = require('../index');
+var Respoke = require('../../index');
 var should = require('should');
-var helpers = require('./helpers');
+var helpers = require('../helpers');
 var uuid = require('uuid');
 
 var respoke;
 
-describe('Respoke', function () {
+describe('Respoke functional', function () {
     this.timeout(10000);
-
-    describe('Base methods and properties', function () {
-        beforeEach(function () {
-            respoke = new Respoke({
-                baseURL: helpers.baseURL
-            });
-        });
-
-        it('has request', function () {
-            respoke.request.should.be.a.Function;
-        });
-
-        it('has wsCall', function () {
-            respoke.wsCall.should.be.a.Function;
-        });
-
-        it('has noop', function () {
-            respoke.noop.should.be.a.Function;
-        });
-
-        it('is an EventEmitter', function () {
-            respoke.on.should.be.a.Function;
-            respoke.emit.should.be.a.Function;
-        });
-
-        it('has expected properties', function () {
-            respoke.tokens.should.be.an.Object;
-            (respoke.connectionId === null).should.be.ok;
-            (respoke.socket === null).should.be.ok;
-            respoke.baseURL.should.be.a.String;
-            respoke.baseURL.should.not.be.empty;
-
-            respoke.auth.should.be.an.Object;
-            respoke.groups.should.be.an.Object;
-            respoke.messages.should.be.an.Object;
-            respoke.roles.should.be.an.Object;
-            respoke.apps.should.be.an.Object;
-            respoke.presence.should.be.an.Object;
-        });
-    });
 
     describe('Authentication', function () {
 
@@ -73,7 +33,6 @@ describe('Respoke', function () {
                 password: 'sea-monkeys'
             }, function (err, body) {
                 err.should.be.an.Error;
-                should(body.token).be.not.ok;
                 done();
             });
         });
@@ -84,28 +43,30 @@ describe('Respoke', function () {
                 endpointId: 'billy',
                 appId: helpers.appId,
                 roleId: helpers.roleId
-            }, function (err, body) {
-                if (err) {
-                    return done(err);
-                }
-
+            }).then(function (body) {
                 body.tokenId.should.be.a.String;
 
+                return body.tokenId;
+            }).then(function (tokenId) {
                 respoke.auth.sessionToken({
-                    tokenId: body.tokenId
-                }, function (err, sessionData) {
-                    if (err) {
-                        return done(err);
-                    }
+                    tokenId: tokenId
+                }).then(function (sessionData) {
                     respoke.tokens['App-Token'].should.be.a.String;
-                    respoke.auth.connect({
-                        endpointId: 'billy'
-                    });
-                    respoke.on('connect', function () {
+                    respoke.on('connect', function (err, res) {
                         respoke.close(done);
                     });
                     respoke.on('error', done);
+
+                    process.nextTick(function () {
+                        respoke.auth.connect({
+                            endpointId: 'billy'
+                        });
+                    });
+                }).catch(function (error) {
+                    done(error);
                 });
+            }).catch(function (error) {
+                done(error);
             });
         });
     });
@@ -217,8 +178,6 @@ describe('Respoke', function () {
                     client1.on('error', done);
                 });
             });
-            
-
 
             client2 = new Respoke({
                 baseURL: helpers.baseURL,
@@ -259,7 +218,7 @@ describe('Respoke', function () {
             };
             if (client1.connectionId) {
                 client1.close(handler);
-            } 
+            }
             else {
                 createdClients++;
                 handler();
@@ -277,7 +236,7 @@ describe('Respoke', function () {
         it('sends and receives messages', function (done) {
             var msgText = "Hey - " + uuid.v4();
 
-            client2.on('message', function (data) {
+            client2.once('message', function (data) {
                 data.header.type.should.equal('message');
                 data.header.from.should.equal(endpointId1);
                 data.body.should.equal(msgText);
