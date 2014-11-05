@@ -1,7 +1,7 @@
 {
-  "name": "respoke",
+  "name": "respoke-admin",
   "version": "0.0.2",
-  "description": "respoke client",
+  "description": "Respoke API client library for Node.js.",
   "main": "index.js",
   "scripts": {
     "test": "istanbul cover _mocha spec/**/*.spec.js",
