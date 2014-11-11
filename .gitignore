@@ -1,5 +1,6 @@
 node_modules/
-spec/helpers.js
+spec/config*.json
+!spec/config.example.json
 *.log
 .DS_Store
 docs/
