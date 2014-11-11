@@ -4,7 +4,7 @@
 [![Dependency Status](https://david-dm.org/respoke/node-respoke-admin.svg)](https://david-dm.org/respoke/node-respoke-admin)
 [![devDependency Status](https://david-dm.org/respoke/node-respoke-admin/dev-status.svg)](https://david-dm.org/respoke/node-respoke-admin#info=devDependencies)
 
-# node-respoke
+# respoke-admin
 
 This wraps the [Respoke][respoke] HTTP and WebSocket API's for use in a Node.js
 app or server.
@@ -15,13 +15,15 @@ app or server.
 
 Install using npm.
 
-    npm install --save respoke
+```bash
+npm install --save respoke-admin
+```
 
 For more details on the node-respoke API see the
-[project documentation][node-respoke]. For more on the Respoke service and how
-it works see the [full documentation][respoke-docs].
+[project documentation][node-respoke-admin]. For more on the Respoke service and
+how it works see the [full documentation][respoke-docs].
 
-[node-respoke]: https://respoke.github.io/node-respoke "node-respoke documentation"
+[node-respoke-admin]: https://respoke.github.io/node-respoke-admin "node-respoke-admin documentation"
 [respoke-docs]: https://docs.respoke.io "full respoke documentation"
 
 ## Testing
@@ -37,17 +39,25 @@ steps.
 
 There are several commands to run the tests.
 
-    # run all tests
-    npm test
+```bash
+# run all tests
+npm test
 
-    # run all tests with extra debug output
-    npm run debug-test
+# run all tests with extra debug output
+npm run debug-test
 
-    # run only unit tests
-    npm run unit
+# run only unit tests
+npm run unit
 
-    # run only functional tests
-    npm run functional
+# run only functional tests
+npm run functional
+```
+
+#### Building and viewing the source documentation
+
+```bash
+npm run docs
+```
 
 ## License
 
