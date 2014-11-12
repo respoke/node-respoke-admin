@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/respoke/node-respoke"
+    "url": "https://github.com/respoke/node-respoke-admin"
   },
   "keywords": [
     "respoke"
@@ -51,9 +51,9 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/respoke/node-respoke/issues"
+    "url": "https://github.com/respoke/node-respoke-admin/issues"
   },
-  "homepage": "https://github.com/respoke/node-respoke",
+  "homepage": "http://respoke.github.io/node-respoke-admin",
   "devDependencies": {
     "grunt": "^0.4.5",
     "grunt-cli": "^0.1.13",
