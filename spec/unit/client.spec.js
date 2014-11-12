@@ -18,6 +18,8 @@ var errors = require('../../lib/utils/errors');
 var sinon = require('sinon');
 var events = require('events');
 
+var config = helpers.loadConfig();
+
 describe('respoke', function () {
     var respoke;
     var nocked;

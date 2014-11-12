@@ -47,7 +47,8 @@ exports = module.exports = function (grunt) {
         },
         'gh-pages': {
             options: {
-                base: '.tmp'
+                base: '.tmp',
+                repo: 'git@github.com:respoke/node-respoke-admin.git'
             },
             src: ['**']
         },

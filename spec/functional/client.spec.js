@@ -13,6 +13,7 @@ var should = require('should');
 var helpers = require('../helpers');
 var uuid = require('uuid');
 
+var config = helpers.loadConfig();
 var respoke;
 
 describe('Respoke functional', function () {
@@ -22,12 +23,12 @@ describe('Respoke functional', function () {
 
         beforeEach(function () {
             respoke = new Respoke({
-                baseURL: helpers.baseURL
+                baseURL: config.baseURL
             });
         });
 
         it('authenticates as an admin with username and password', function (done) {
-            respoke.auth.admin(helpers.auth, function (err, body) {
+            respoke.auth.admin(config.auth, function (err, body) {
                 if (err) {
                     return done(err);
                 }
@@ -47,11 +48,11 @@ describe('Respoke functional', function () {
         });
 
         it('uses App-Secret to obtain a working brokered auth token', function (done) {
-            respoke.tokens['App-Secret'] = helpers.appSecret;
+            respoke.tokens['App-Secret'] = config.appSecret;
             respoke.auth.endpoint({
                 endpointId: 'billy',
-                appId: helpers.appId,
-                roleId: helpers.roleId
+                appId: config.appId,
+                roleId: config.roleId
             }).then(function (body) {
                 body.tokenId.should.be.a.String;
 
@@ -85,9 +86,9 @@ describe('Respoke functional', function () {
 
         beforeEach(function (done) {
             respoke = new Respoke({
-                baseURL: helpers.baseURL
+                baseURL: config.baseURL
             });
-            respoke.auth.admin(helpers.auth, done);
+            respoke.auth.admin(config.auth, done);
         });
 
         it('lets you get an array of apps', function (done) {
@@ -99,10 +100,10 @@ describe('Respoke functional', function () {
         });
 
         it('gets a single app by id', function (done) {
-            respoke.apps.get({ appId: helpers.appId }, function (err, singleApp) {
+            respoke.apps.get({ appId: config.appId }, function (err, singleApp) {
                 should.not.exist(err);
                 singleApp.should.be.an.Object;
-                singleApp.id.should.equal(helpers.appId);
+                singleApp.id.should.equal(config.appId);
                 done();
             });
         });
@@ -113,14 +114,14 @@ describe('Respoke functional', function () {
 
         beforeEach(function (done) {
             respoke = new Respoke({
-                baseURL: helpers.baseURL
+                baseURL: config.baseURL
             });
-            respoke.auth.admin(helpers.auth, done);
+            respoke.auth.admin(config.auth, done);
         });
 
 
         it('fetches all roles for an app', function (done) {
-            respoke.roles.get({ appId: helpers.appId }, function (err, roles) {
+            respoke.roles.get({ appId: config.appId }, function (err, roles) {
                 should.not.exist(err);
                 roles.should.be.an.Array;
                 done();
@@ -128,8 +129,8 @@ describe('Respoke functional', function () {
         });
 
         it('creates and removes a role', function (done) {
-            var role = helpers.role();
-            role.appId = helpers.appId;
+            var role = config.role;
+            role.appId = config.appId;
             role.name = 'test-role-' + uuid.v4();
             respoke.roles.create(role, function (err, createdRole) {
                 should.not.exist(err);
@@ -164,13 +165,13 @@ describe('Respoke functional', function () {
             // do brokered auth for each client
 
             client1 = new Respoke({
-                baseURL: helpers.baseURL,
-                'App-Secret': helpers.appSecret
+                baseURL: config.baseURL,
+                'App-Secret': config.appSecret
             });
             client1.auth.endpoint({
                 endpointId: endpointId1,
-                appId: helpers.appId,
-                roleId: helpers.roleId
+                appId: config.appId,
+                roleId: config.roleId
             }, function (err, body) {
                 if (err) {
                     return done(err);
@@ -189,13 +190,13 @@ describe('Respoke functional', function () {
             });
 
             client2 = new Respoke({
-                baseURL: helpers.baseURL,
-                'App-Secret': helpers.appSecret
+                baseURL: config.baseURL,
+                'App-Secret': config.appSecret
             });
             client2.auth.endpoint({
                 endpointId: endpointId2,
-                appId: helpers.appId,
-                roleId: helpers.roleId
+                appId: config.appId,
+                roleId: config.roleId
             }, function (err, body) {
                 if (err) {
                     return done(err);
