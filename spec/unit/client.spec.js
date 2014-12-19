@@ -432,6 +432,27 @@ describe('respoke', function () {
                 });
             });
         });
+
+        describe('disconnect', function () {
+
+            before(function () {
+                respoke = createRespokeWithFakeSocket();
+                fakeSocket.disconnect = sinon.stub();
+                respoke.auth.connect();
+
+                sinon.stub(respoke, 'wsCall', function () {
+                        fakeSocket.emit('disconnect');
+                        return new Promise.resolve();
+                    });
+            });
+
+            it('disconnects socket', function () {
+                return respoke.close()
+                    .then(function () {
+                        fakeSocket.disconnect.should.have.property('calledOnce', true);
+                    });
+            });
+        });
     });
 
     describe('apps get', function () {
