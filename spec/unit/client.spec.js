@@ -441,9 +441,9 @@ describe('respoke', function () {
                 respoke.auth.connect();
 
                 sinon.stub(respoke, 'wsCall', function () {
-                        fakeSocket.emit('disconnect');
-                        return new Promise.resolve();
-                    });
+                    fakeSocket.emit('disconnect');
+                    return new Promise.resolve();
+                });
             });
 
             it('disconnects socket', function () {
