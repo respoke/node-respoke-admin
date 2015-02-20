@@ -47,8 +47,10 @@ var TestHelpers = {
         }
 
         try {
-            envConfig = JSON.parse(process.env.TEST_CONFIG);
-            _.merge(config, envConfig);
+            if (process.env.TEST_CONFIG) {
+                envConfig = JSON.parse(process.env.TEST_CONFIG);
+                _.merge(config, envConfig);
+            }
         } catch (e) {
             console.error('Error parsing TEST_CONFIG environment variable: ', e);
         }
