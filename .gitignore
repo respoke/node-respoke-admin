@@ -7,3 +7,4 @@ docs/
 coverage/
 .tmp/
 .grunt/
+.idea/
