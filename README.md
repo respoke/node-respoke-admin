@@ -34,7 +34,7 @@ steps.
 - create a test app in the your admin portal at [respoke.io][respoke]
 - turn *off* dev mode
 - create a new blank role (name value is not important)
-- `cp spec/helpers.example.js spec/helpers.js`
+- `cp spec/config.example.json spec/config.json`
 - fill in the information in the `spec/helpers.js` file
 
 There are several commands to run the tests.
@@ -61,7 +61,7 @@ npm run docs
 
 ## License
 
-Copyright 2014, Digium, Inc.
+Copyright 2014-2015, Digium, Inc.
 All rights reserved.
 
 This source code is licensed under The MIT License found in the
