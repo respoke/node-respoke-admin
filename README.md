@@ -19,9 +19,9 @@ Install using npm.
 npm install --save respoke-admin
 ```
 
-For more details on the node-respoke API see the
-[project documentation][node-respoke-admin]. For more on the Respoke service and
-how it works see the [full documentation][respoke-docs].
+## Documentation
+- node-respoke-admin module documentation: [node-respoke-admin documentation][node-respoke-admin]
+- Respoke.io documentation: [respoke.io full documentation][respoke-docs]
 
 [node-respoke-admin]: https://respoke.github.io/node-respoke-admin "node-respoke-admin documentation"
 [respoke-docs]: https://docs.respoke.io "full respoke documentation"
