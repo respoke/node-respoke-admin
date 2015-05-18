@@ -4,13 +4,24 @@
 <a href="https://travis-ci.org/respoke/node-respoke-admin"><img src="https://travis-ci.org/respoke/node-respoke-admin.svg" alt="Build Status"></a>
 <a href="https://david-dm.org/respoke/node-respoke-admin"><img src="https://david-dm.org/respoke/node-respoke-admin.svg" alt="Dependency Status"></a>
 <a href="https://david-dm.org/respoke/node-respoke-admin#info=devDependencies"><img src="https://david-dm.org/respoke/node-respoke-admin/dev-status.svg" alt="devDependency Status"></a></p>
-<h2 id="usage">Usage</h2>
+<h2 id="setup">Setup</h2>
 <p>Install using npm.</p>
 <pre><code class="lang-bash">npm install --save respoke-admin
 </code></pre>
 <p>For more details on the node-respoke API see the
 <a href="https://respoke.github.io/node-respoke-admin" title="node-respoke-admin documentation">project documentation</a>. For more on the Respoke service and
 how it works see the <a href="https://docs.respoke.io" title="full respoke documentation">full documentation</a>.</p>
+<h2 id="debugging">Debugging</h2>
+<p>This library uses the <code>debug</code> npm module. To enable debugging output, use the following
+environment variable:</p>
+<pre><code class="lang-bash">DEBUG=respoke-client
+</code></pre>
+<h2 id="error-handling">Error handling</h2>
+<p>A respoke <code>client</code> inherits from <code>EventEmitter</code>.</p>
+<pre><code class="lang-javascript">client.on(&#39;error&#39;, function (err) { console.error(err); });
+</code></pre>
+<p>If you fail to listen for the error event, <strong>errors will be thrown</strong> so they are not
+buried.</p>
 <h2 id="testing">Testing</h2>
 <p>Before you can run the functional tests you will need to complete the following
 steps.</p>
@@ -52,9 +63,9 @@ In general, the hierarchy of credentials is as follows:</p>
 </ol>
 </blockquote>
 <hr>
-<h2 id="usage">Usage</h2>
+<h2 id="examples">Examples</h2>
 <h3 id="instantiate-a-client-with-an-app-secret-">Instantiate a client with an <code>App-Secret</code></h3>
-<pre><code> var Respoke = require(&#39;respoke&#39;);
+<pre><code> var Respoke = require(&#39;respoke-admin&#39;);
  var admin = new Respoke({
      // from the Respoke developer console under one of your apps
      appId: &quot;XXXX-XXX-XXXXX-XXXX&quot;,
@@ -177,8 +188,9 @@ depending on how your application decides to implement presence.</div></div><br 
 </div><br><h4>Arguments</h4><div class="row hidden-xs param"><div class="col-sm-4">Name</div><div class="col-sm-3">Type</div><div class="col-sm-5"></div></div><div class="row param"><div class="col-sm-4"><code>params</code></div><div class="col-sm-3"><strong>object</strong></div><div class="col-sm-5"></div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>params.to</code></div><div class="col-sm-3"><strong>string</strong></div><div class="col-sm-5">endpointId</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>params.connectionId</code></div><div class="col-sm-3"><strong>string</strong></div><div class="col-sm-5">optional</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>params.message</code></div><div class="col-sm-3"><strong>string</strong></div><div class="col-sm-5">required</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>params.type='message'</code></div><div class="col-sm-3"><strong>string</strong></div><div class="col-sm-5">optional</div></div><br class="visible-xs"><br><br>
 </div><div id="groups" class="comment"><h3><code>object</code><a href="#groups" class="bold"> respoke.groups</a></h3><div><p>Namespace object. Groups.</p>
 </div><br><br>
-</div><div id="groups-publish" class="comment"><h3><a href="#groups.publish"><span class="bold"> respoke.groups.publish(params)</span></a></h3><p><span class="label label-default">endpoint</span>&nbsp;<span class="label label-default">web-socket</span>&nbsp;</p><div><p>Send a message to a group.</p>
-</div><br><h4>Arguments</h4><div class="row hidden-xs param"><div class="col-sm-4">Name</div><div class="col-sm-3">Type</div><div class="col-sm-5"></div></div><div class="row param"><div class="col-sm-4"><code>params</code></div><div class="col-sm-3"><strong>object</strong></div><div class="col-sm-5"></div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>params.groupId</code></div><div class="col-sm-3"><strong>string</strong></div><div class="col-sm-5"></div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>params.message</code></div><div class="col-sm-3"><strong>string</strong></div><div class="col-sm-5"></div></div><br class="visible-xs"><br><br>
+</div><div id="groups-publish" class="comment"><h3><a href="#groups.publish"><span class="bold"> respoke.groups.publish(params)</span></a></h3><p><span class="label label-default">endpoint</span>&nbsp;<span class="label label-default">web-socket</span>&nbsp;</p><div><p>Send a message to a group. When authenticated as an admin via <code>App-Secret</code>
+or <code>Admin-Token</code>, you can pass messages for any <code>endpointId</code>.</p>
+</div><br><h4>Arguments</h4><div class="row hidden-xs param"><div class="col-sm-4">Name</div><div class="col-sm-3">Type</div><div class="col-sm-5"></div></div><div class="row param"><div class="col-sm-4"><code>params</code></div><div class="col-sm-3"><strong>object</strong></div><div class="col-sm-5"></div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>params.groupId</code></div><div class="col-sm-3"><strong>string</strong></div><div class="col-sm-5"></div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>params.message</code></div><div class="col-sm-3"><strong>string</strong></div><div class="col-sm-5"></div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>params.endpointId=self.endpointId</code></div><div class="col-sm-3"><strong>string</strong></div><div class="col-sm-5"></div></div><br class="visible-xs"><br><br>
 </div><div id="groups-getSubscribers" class="comment"><h3><a href="#groups.getSubscribers"><span class="bold"> respoke.groups.getSubscribers(params, callback)</span></a></h3><p><span class="label label-default">endpoint</span>&nbsp;<span class="label label-default">web-socket</span>&nbsp;</p><div><p>Get the members of a group.</p>
 </div><br><h4>Arguments</h4><div class="row hidden-xs param"><div class="col-sm-4">Name</div><div class="col-sm-3">Type</div><div class="col-sm-5"></div></div><div class="row param"><div class="col-sm-4"><code>params</code></div><div class="col-sm-3"><strong>object</strong></div><div class="col-sm-5"></div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>params.groupId</code></div><div class="col-sm-3"><strong>string</strong></div><div class="col-sm-5"></div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>callback</code></div><div class="col-sm-3"><strong>function</strong></div><div class="col-sm-5"></div></div><br class="visible-xs"><br><br>
 </div><div id="groups-join" class="comment"><h3><a href="#groups.join"><span class="bold"> respoke.groups.join(params, callback)</span></a></h3><p><span class="label label-default">endpoint</span>&nbsp;<span class="label label-default">web-socket</span>&nbsp;</p><div><p>Join a group.</p>
