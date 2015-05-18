@@ -147,8 +147,10 @@ describe('Respoke functional', function () {
     });
 
     describe('Messaging and Groups', function () {
+        var adminEndpointId = "admin-" + uuid.v4();
         var endpointId1 = "client1-" + uuid.v4();
         var endpointId2 = "client2-" + uuid.v4();
+        var adminClient = null;
         var client1 = null;
         var client2 = null;
         var createdClients = 0;
@@ -157,11 +159,20 @@ describe('Respoke functional', function () {
             createdClients = 0;
             var onConnect = function () {
                 createdClients++;
-                if (createdClients === 2) {
+                if (createdClients === 3) {
                     done();
                 }
             };
-
+            
+            adminClient = new Respoke({
+                baseURL: config.baseURL,
+                'App-Secret': config.appSecret
+            });
+            adminClient.auth.connect({ endpointId: adminEndpointId });
+            adminClient.on('connect', onConnect);
+            adminClient.on('error', done);
+            
+            
             // do brokered auth for each client
 
             client1 = new Respoke({
@@ -379,8 +390,8 @@ describe('Respoke functional', function () {
             }
         });
         
-        // pending respoke API changes to support this
-        xit('admin sends group message as different endpoint', function (done) {
+        // TODO: uncomment when this is fixed in Respoke API
+        it.skip('admin sends group message as different endpoint', function (done) {
             var groupId = 'somegroup-' + uuid.v4();
             var totalJoined = 0;
             var msgText = "Hey - " + uuid.v4();
@@ -391,24 +402,27 @@ describe('Respoke functional', function () {
                     return;
                 }
                 totalJoined++;
-                if (totalJoined === 2) {
+                if (totalJoined === 1) {
                     doTest();
                 }
             };
 
-            client1.groups.join({ groupId: groupId }, errHandler);
             client2.groups.join({ groupId: groupId }, errHandler);
 
             function doTest() {
                 client2.on('pubsub', function (data) {
+                    // The core test is that the endpointId is the one we specified
                     data.header.from.should.equal('BATMAN');
+                    data.header.from.should.not.equal('__SYSTEM__');
                     data.header.from.should.not.equal(endpointId1);
+                    
+                    // also important
                     data.header.groupId.should.equal(groupId);
                     data.header.type.should.equal('pubsub');
                     data.message.should.equal(msgText);
                     done();
                 });
-                client1.groups.publish({
+                adminClient.groups.publish({
                     groupId: groupId,
                     message: msgText,
                     endpointId: 'BATMAN'
