@@ -378,6 +378,47 @@ describe('Respoke functional', function () {
                 });
             }
         });
+        
+        // pending respoke API changes to support this
+        xit('admin sends group message as different endpoint', function (done) {
+            var groupId = 'somegroup-' + uuid.v4();
+            var totalJoined = 0;
+            var msgText = "Hey - " + uuid.v4();
+
+            var errHandler = function (err) {
+                if (err) {
+                    done(err);
+                    return;
+                }
+                totalJoined++;
+                if (totalJoined === 2) {
+                    doTest();
+                }
+            };
+
+            client1.groups.join({ groupId: groupId }, errHandler);
+            client2.groups.join({ groupId: groupId }, errHandler);
+
+            function doTest() {
+                client2.on('pubsub', function (data) {
+                    data.header.from.should.equal('BATMAN');
+                    data.header.from.should.not.equal(endpointId1);
+                    data.header.groupId.should.equal(groupId);
+                    data.header.type.should.equal('pubsub');
+                    data.message.should.equal(msgText);
+                    done();
+                });
+                client1.groups.publish({
+                    groupId: groupId,
+                    message: msgText,
+                    endpointId: 'BATMAN'
+                }, function (err) {
+                    if (err) {
+                        return done(err);
+                    }
+                });
+            }
+        });
 
         it('gets join and leave events', function (done) {
             var groupId = 'somegroup-' + uuid.v4();
