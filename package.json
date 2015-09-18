@@ -80,6 +80,7 @@
     "es6-promise": "^2.1.1",
     "lodash": "^3.9.3",
     "nodeify": "^1.0.0",
+    "os-name": "^1.0.3",
     "request": "^2.40.0",
     "socket.io-client": "^0.9.x"
   }
