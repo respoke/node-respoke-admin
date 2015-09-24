@@ -1,11 +1,11 @@
 language: node_js
 node_js:
-- 0.10
+- 0.1
 sudo: required
 notifications:
   email:
     recipients:
     - monitoring@respoke.io
 before_install:
-- openssl aes-256-cbc -K $encrypted_b6f765d5077e_key -iv $encrypted_b6f765d5077e_iv
+- openssl aes-256-cbc -K $encrypted_214cf3840981_key -iv $encrypted_214cf3840981_iv
   -in spec/config.json.enc -out spec/config.json -d
