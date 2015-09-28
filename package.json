@@ -77,7 +77,7 @@
   },
   "dependencies": {
     "debug": "^2.2.0",
-    "es6-promise": "^2.1.1",
+    "es6-promise": "^3.0.0",
     "lodash": "^3.9.3",
     "nodeify": "^1.0.0",
     "os-name": "^1.0.3",
