@@ -81,7 +81,6 @@ describe('Respoke functional', function () {
         });
     });
 
-
     describe('Apps', function (done) {
 
         beforeEach(function (done) {
@@ -118,7 +117,6 @@ describe('Respoke functional', function () {
             });
             respoke.auth.admin(config.auth, done);
         });
-
 
         it('fetches all roles for an app', function (done) {
             respoke.roles.get({ appId: config.appId }, function (err, roles) {
@@ -163,7 +161,7 @@ describe('Respoke functional', function () {
                     done();
                 }
             };
-            
+
             adminClient = new Respoke({
                 baseURL: config.baseURL,
                 'App-Secret': config.appSecret
@@ -171,8 +169,7 @@ describe('Respoke functional', function () {
             adminClient.auth.connect({ endpointId: adminEndpointId });
             adminClient.on('connect', onConnect);
             adminClient.on('error', done);
-            
-            
+
             // do brokered auth for each client
 
             client1 = new Respoke({
@@ -389,7 +386,7 @@ describe('Respoke functional', function () {
                 });
             }
         });
-        
+
         // TODO: uncomment when this is fixed in Respoke API
         it.skip('admin sends group message as different endpoint', function (done) {
             var groupId = 'somegroup-' + uuid.v4();
@@ -415,7 +412,7 @@ describe('Respoke functional', function () {
                     data.header.from.should.equal('BATMAN');
                     data.header.from.should.not.equal('__SYSTEM__');
                     data.header.from.should.not.equal(endpointId1);
-                    
+
                     // also important
                     data.header.groupId.should.equal(groupId);
                     data.header.type.should.equal('pubsub');
@@ -494,7 +491,6 @@ describe('Respoke functional', function () {
             });
 
         });
-
 
     });
 
