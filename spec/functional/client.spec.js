@@ -41,8 +41,9 @@ describe('Respoke functional', function () {
             respoke.auth.admin({
                 username: 'ducksized',
                 password: 'sea-monkeys'
-            }, function (err, body) {
-                err.should.be.an.Error;
+            }, function (err) {
+                should.exist(err);
+                err.should.be.an.instanceof(Error);
                 done();
             });
         });
@@ -60,9 +61,9 @@ describe('Respoke functional', function () {
             }).then(function (tokenId) {
                 respoke.auth.sessionToken({
                     tokenId: tokenId
-                }).then(function (sessionData) {
+                }).then(function () {
                     respoke.tokens['App-Token'].should.be.a.String;
-                    respoke.on('connect', function (err, res) {
+                    respoke.on('connect', function () {
                         respoke.close(done);
                     });
                     respoke.on('error', done);
@@ -81,7 +82,7 @@ describe('Respoke functional', function () {
         });
     });
 
-    describe('Apps', function (done) {
+    describe('Apps', function () {
 
         beforeEach(function (done) {
             respoke = new Respoke({
@@ -187,7 +188,7 @@ describe('Respoke functional', function () {
 
                 client1.auth.sessionToken({
                     tokenId: body.tokenId
-                }, function (err, sessionData) {
+                }, function (err) {
                     if (err) {
                         return done(err);
                     }
@@ -212,7 +213,7 @@ describe('Respoke functional', function () {
 
                 client2.auth.sessionToken({
                     tokenId: body.tokenId
-                }, function (err, sessionData) {
+                }, function (err) {
                     if (err) {
                         return done(err);
                     }
@@ -264,7 +265,7 @@ describe('Respoke functional', function () {
             client1.messages.send({
                 to: endpointId2,
                 message: msgText
-            }, function (err, info) {
+            }, function (err) {
                 if (err) {
                     done(err);
                     return;
@@ -275,7 +276,6 @@ describe('Respoke functional', function () {
         it('lists groups members and observes presence', function (done) {
             var groupId = 'somegroup-' + uuid.v4();
             var totalJoined = 0;
-            var msgText = "Hey - " + uuid.v4();
 
             var errHandler = function (err) {
                 if (err) {
@@ -433,8 +433,6 @@ describe('Respoke functional', function () {
 
         it('gets join and leave events', function (done) {
             var groupId = 'somegroup-' + uuid.v4();
-            var totalJoined = 0;
-            var msgText = "Hey - " + uuid.v4();
             var gotJoin = false;
             var alreadyDoned = false;
 

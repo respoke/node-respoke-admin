@@ -24,7 +24,7 @@
     "undef"         : true,     // Require all non-global variables be declared before they are used.
     "strict"        : true,     // Require `use strict` pragma in every file.
     "trailing"      : true,     // Prohibit trailing whitespaces.
-    "unused"        : false,    // Prohibit unused variables
+    "unused"        : true,    // Prohibit unused variables
 
     // == Relaxing Options ================================================
     //
@@ -105,8 +105,7 @@
 
     "maxerr"        : 100,      // Maximum errors before stopping.
     "predef"        : [         // Extra globals.
-        // Promise is in jshint@2.5.4, but not in node.js 0.10
-        "-Promise",
+        "Promise",
         "it",
         "describe",
         "xit",

@@ -10,6 +10,10 @@
 'use strict';
 
 var _ = require('lodash');
+var uuid = require('uuid');
+var events = require('events');
+
+var Respoke = require('../index');
 
 var roleTestValues = {
     mediaRelay: false,
@@ -30,7 +34,13 @@ var roleTestValues = {
     }
 };
 
+var baseDomain = 'http://respoke.test';
+var baseURL = baseDomain + '/v1';
+
 var TestHelpers = {
+    errors: require('../lib/utils/errors.js'),
+    baseDomain: baseDomain,
+    baseURL: baseURL,
     loadConfig: function (config) {
         var defaultTestConfig;
         var envConfig;
@@ -58,6 +68,31 @@ var TestHelpers = {
         config.role = _.merge(config.role, roleTestValues);
 
         return config;
+    },
+    createRespoke: function (opts) {
+        var opts = opts || {};
+        opts = _.defaults(opts, { baseURL: baseURL });
+        return new Respoke(opts);
+    },
+
+    createRespokeWithAuth: function (opts) {
+        var opts = opts || {};
+        var respoke;
+
+        opts['App-Token'] = uuid.v4();
+        respoke = this.createRespoke(opts);
+
+        return respoke;
+    },
+
+    createRespokeWithFakeSocket: function (opts) {
+        var opts = opts || {};
+        var respoke;
+
+        opts.socket = new events.EventEmitter();
+        respoke = this.createRespokeWithAuth(opts);
+
+        return respoke;
     }
 };
 
