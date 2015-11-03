@@ -25,6 +25,11 @@ describe('Respoke functional', function () {
                 baseURL: config.baseURL
             });
         });
+        afterEach(function () {
+            if (respoke && respoke.socket) {
+                return respoke.close();
+            }
+        });
         describe('via username and password', function () {
             describe('when using bad credentials', function () {
                 it('fails admin auth with bad credentials', function (done) {
@@ -81,6 +86,7 @@ describe('Respoke functional', function () {
         });
         describe('when using App-Secret to connect via web socket', function () {
             var adminClient;
+            var joe;
             beforeEach(function (done) {
                 adminClient = new Respoke({
                     baseURL: config.baseURL,
@@ -88,11 +94,15 @@ describe('Respoke functional', function () {
                     appId: config.appId
                 });
                 adminClient.on('connect', function () {
-                    console.log('admin client on connect');
                     done();
                 });
                 adminClient.on('error', function (err) { throw err; });
                 adminClient.auth.connect({ endpointId: 'princess' });
+            });
+            afterEach(function () {
+                afterEach(function () {
+                    return adminClient.close().then(joe.close);
+                });
             });
             describe('and the App-Secret client does brokered auth for a non-admin client', function () {
                 var tokenId;
@@ -109,7 +119,7 @@ describe('Respoke functional', function () {
                     });
                 });
                 it('the non-admin client can also connect via web socket', function (done) {
-                    var joe = new Respoke({
+                    joe = new Respoke({
                         baseURL: config.baseURL
                     });
                     joe.on('connect', done);
@@ -303,29 +313,11 @@ describe('Respoke functional', function () {
             });
         });
 
-        afterEach(function (done) {
-            var closedTotal = 0;
-            var handler = function (err) {
-                if (err) {
-                    return done(err);
-                }
-                closedTotal++;
-                if (closedTotal === 2) {
-                    done();
-                }
-            };
-            if (client1.connectionId) {
-                client1.close(handler);
-            }
-            else {
-                handler();
-            }
-            if (client2.connectionId) {
-                client2.close(handler);
-            }
-            else {
-                handler();
-            }
+        afterEach(function () {
+            return Promise.all([
+                client1.close(),
+                client2.close()
+            ]);
         });
 
         // client 1 sending a message to client 2
@@ -351,77 +343,39 @@ describe('Respoke functional', function () {
         });
         describe('when client 1 and client 2 join a group', function () {
             var groupId;
-            beforeEach(function (done) {
+            beforeEach(function () {
                 groupId = 'somegroup-' + uuid.v4();
-                var totalJoined = 0;
-
-                var errHandler = function (err) {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-                    totalJoined++;
-                    if (totalJoined === 2) {
-                        done();
-                    }
-                };
-
-                client1.groups.join({ groupId: groupId }, errHandler);
-                client2.groups.join({ groupId: groupId }, errHandler);
+                return Promise.all([
+                    client1.groups.join({ groupId: groupId }),
+                    client2.groups.join({ groupId: groupId })
+                ]);
             });
             describe('and client 1 listens for presence', function () {
-                it('client 1 receives that presence event from client 2', function (done) {
-                    // Make sure both members are in the group
-                    client1.groups.getSubscribers({ groupId: groupId }, function (err, members) {
-                        if (err) {
-                            return done(err);
-                        }
-                        members.should.be.an.Array;
-                        var hasClient1 = false;
-                        var hasClient2 = false;
-                        for (var i = 0; i < members.length; i++) {
-                            var memb = members[i];
-                            memb.endpointId.should.be.a.String;
-                            memb.connectionId.should.be.a.String;
-                            if (memb.endpointId === endpointId1) {
-                                hasClient1 = true;
-                            }
-                            if (memb.endpointId === endpointId2) {
-                                hasClient2 = true;
-                            }
-                        }
-                        hasClient1.should.be.ok;
-                        hasClient2.should.be.ok;
-
-                        client1.presence.observe(endpointId2, function (err) {
-                            if (err) {
-                                done(err);
-                            }
-                        });
-
-                        // the test
-                        client1.on('presence', function (data) {
-                            data.presence.should.equal('At lunch');
-                            data.header.type.should.equal('presence');
-                            data.header.from.should.equal(endpointId2);
-                            data.header.fromConnection.should.be.a.String;
-                            data.type.should.equal('available');
-                            done();
-                        });
-
-                        // ensure there was time to subscribe
-                        setTimeout(function () {
-                            client2.presence.set({
-                                endpointId: endpointId2,
-                                presence: 'At lunch'
-                            }, function (err) {
-                                if (err) {
-                                    throw err;
-                                }
-                            });
-                        }, 1500);
-
+                beforeEach(function () {
+                    return client1.presence.observe(endpointId2);
+                });
+                it('client 1 receives a presence event sent from client 2', function (done) {
+                    // the test
+                    client1.on('presence', function (data) {
+                        should.exist(data);
+                        should.exist(data.header);
+                        data.header.from.should.equal(endpointId2);
+                        data.header.fromConnection.should.be.a.String;
+                        data.type.should.equal('At lunch');
+                        done();
                     });
+
+                    // ensure there was time to subscribe
+                    setTimeout(function () {
+                        client2.presence.set({
+                            endpointId: endpointId2,
+                            presence: 'At lunch'
+                        }, function (err) {
+                            if (err) {
+                                throw err;
+                            }
+                        });
+                    }, 500);
                 });
             });
             describe('and client 1 sends a group message', function () {
@@ -439,6 +393,40 @@ describe('Respoke functional', function () {
                     }, function (err) {
                         if (err) {
                             return done(err);
+                        }
+                    });
+                });
+            });
+            describe('and an admin client is connected', function () {
+                beforeEach(function (done) {
+                    adminClient.on('connect', done);
+                    adminClient.auth.connect({ endpointId: 'brewster' });
+                });
+                afterEach(function () {
+                    return adminClient.close();
+                });
+                it('the admin clients sends a message from a different endpoint', function (done) {
+
+                    client2.on('pubsub', function (data) {
+                        // The core test is that the endpointId is the one we specified
+                        data.header.from.should.equal('BATMAN');
+                        data.header.from.should.not.equal('__SYSTEM__');
+                        data.header.from.should.not.equal(endpointId1);
+
+                        // also important
+                        data.header.groupId.should.equal(groupId);
+                        data.header.type.should.equal('pubsub');
+                        data.message.should.equal('Hi little guy');
+                        done();
+                    });
+
+                    adminClient.groups.publish({
+                        groupId: groupId,
+                        message: 'Hi little guy',
+                        endpointId: 'BATMAN'
+                    }, function (err) {
+                        if (err) {
+                            throw err;
                         }
                     });
                 });
@@ -510,50 +498,6 @@ describe('Respoke functional', function () {
 
                 });
             });
-        });
-
-        // TODO: uncomment when this is fixed in Respoke API
-        it.skip('admin sends group message as different endpoint', function (done) {
-            var groupId = 'somegroup-' + uuid.v4();
-            var totalJoined = 0;
-            var msgText = "Hey - " + uuid.v4();
-
-            var errHandler = function (err) {
-                if (err) {
-                    done(err);
-                    return;
-                }
-                totalJoined++;
-                if (totalJoined === 1) {
-                    doTest();
-                }
-            };
-
-            client2.groups.join({ groupId: groupId }, errHandler);
-
-            function doTest() {
-                client2.on('pubsub', function (data) {
-                    // The core test is that the endpointId is the one we specified
-                    data.header.from.should.equal('BATMAN');
-                    data.header.from.should.not.equal('__SYSTEM__');
-                    data.header.from.should.not.equal(endpointId1);
-
-                    // also important
-                    data.header.groupId.should.equal(groupId);
-                    data.header.type.should.equal('pubsub');
-                    data.message.should.equal(msgText);
-                    done();
-                });
-                adminClient.groups.publish({
-                    groupId: groupId,
-                    message: msgText,
-                    endpointId: 'BATMAN'
-                }, function (err) {
-                    if (err) {
-                        return done(err);
-                    }
-                });
-            }
         });
 
     });
