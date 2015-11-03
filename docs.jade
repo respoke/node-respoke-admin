@@ -18,6 +18,34 @@ html
     title=subTitle + " - " + title
     link(rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css")
     link(rel="stylesheet" href="https://highlightjs.org/static/styles/github.css")
+    link(href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,300' rel='stylesheet' type='text/css')
+    style(type="text/css").
+        html, body {
+            font-family: 'Open Sans', sans-serif;
+        }
+        h1, h2, h3 {
+            color: #f76;
+        }
+        h4, h5 {
+            font-weight: 600;
+        }
+        a {
+            color: #57adff !important;
+        }
+        pre {
+            box-shadow: inset 1px 1px 2px #4a4a4a;
+            background: #f4f4f4;
+            border: none;
+        }
+        pre code {
+            background: #f4f4f4 !important;
+        }
+        code {
+            word-wrap: break-word;
+        }
+        .container {
+            max-width: 750px;
+        }
     script(src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js")
     script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js")
     script(src="https://highlightjs.org/static/highlight.pack.js")
@@ -72,25 +100,23 @@ html
 
       each comment, indx in publicComments
         .comment(id=comment.ctx.name.replace('.','-'))
-          if (indx === 0)
-            //- do nothing, the first comment is the class declaration
+          if (indx !== 0)
 
-          else if (comment.ctx.type === "property")
-            //- the title of the method or prop
-            h3
-              code= comment.type
-              a.bold(href="#"+comment.ctx.name)= " " + className + "." + comment.ctx.name
-          else if (comment.ctx.type === "function")
-            h3
-              code= "function"
-              a.bold(href="#"+comment.ctx.name)= " " + className + "." + comment.ctx.name
-          else
-            h3: a(href="#"+comment.ctx.name)
-              span.bold= " " + className + "." + comment.ctx.name + "(" + comment.argumentArray.join(', ') + ")"
-            if (comment.returns)
-              p: strong returns
-                code= comment.returns || "undefined"
-
+              if (comment.ctx.type === "property")
+                //- the title of the method or prop
+                h4
+                  code= comment.type
+                  a.bold(href="#"+comment.ctx.name)= " " + className + "." + comment.ctx.name
+              else if (comment.ctx.type === "function")
+                h4
+                  code= "function"
+                  a.bold(href="#"+comment.ctx.name)= " " + className + "." + comment.ctx.name
+              else
+                h4: a(href="#"+comment.ctx.name)
+                  span.bold= " " + className + "." + comment.ctx.name + "(" + comment.argumentArray.join(', ') + ")"
+                if (comment.returns)
+                  p: strong returns
+                    code= comment.returns || "undefined"
 
           //- info about the method or prop
           if (comment.augments)
@@ -109,16 +135,15 @@ html
                 | &nbsp;
 
           div!= comment.description.full
-
+          
+          if (indx === 0)
+            br
+            h2 Constructor
+            h4: code new Respoke(options)
           //- Arguments
           if (comment.methodParams.length)
             br
-            h4 Arguments
-
-            .row.hidden-xs.param
-              .col-sm-4 Name
-              .col-sm-3 Type
-              .col-sm-5
+            h5 Arguments
 
             each param in comment.methodParams
               .row.param
@@ -131,7 +156,7 @@ html
           //- put a header at the end of the class declaration
           if (indx === 0)
             h2 Properties and Methods
-
+          br
           //-
           //- Uncomment for devving!!!
           //-
@@ -196,5 +221,3 @@ html
               //- a(href="javascript:void(0)" onclick="this.nextSibling.style.display = this.nextSibling.style.display == 'block' ? 'none' : 'block'") JSON
               //- pre(style="display:none")
               //-   code=JSON.stringify(comment, null, 4)
-
-
