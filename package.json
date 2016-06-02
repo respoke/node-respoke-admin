@@ -4,9 +4,9 @@
   "description": "Respoke API client library for Node.js.",
   "main": "index.js",
   "scripts": {
-    "test": "istanbul cover _mocha spec/**/*.spec.js",
-    "functional": "mocha spec/functional/**/*.spec.js",
-    "unit": "mocha spec/unit/**/*.spec.js",
+    "test": "istanbul cover _mocha 'spec/**/*.spec.js'",
+    "functional": "mocha 'spec/functional/**/*.spec.js'",
+    "unit": "mocha 'spec/unit/**/*.spec.js'",
     "debug-test": "DEBUG=respoke-client,respoke-admin npm test",
     "docs": "grunt docs",
     "build-readme": "grunt build"
