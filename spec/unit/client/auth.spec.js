@@ -312,8 +312,7 @@ describe('auth', function () {
                 'reconnect',
                 'reconnecting',
                 'error',
-                'connect_error',
-                'connect_timeout',
+                'connect_failed',
                 'message',
                 'presence',
                 'join',
@@ -332,10 +331,11 @@ describe('auth', function () {
             });
 
             it('assigns the correct number of listeners', function () {
-                respoke.socket.on.callCount.should.equal(expectedListeners.length);
                 expectedListeners.forEach(function (expectedEvent) {
-                    respoke.socket.on.calledWith(expectedEvent).should.equal(true);
+                    respoke.socket.on.calledWith(expectedEvent).should
+                        .equal(true, expectedEvent + ' should have been registered');
                 });
+                respoke.socket.on.callCount.should.equal(expectedListeners.length);
             });
         });
     });
