@@ -82,6 +82,6 @@
     "nodeify": "^1.0.0",
     "os-name": "^1.0.3",
     "request": "^2.40.0",
-    "socket.io-client": "^0.9.16"
+    "socket.io-client": "git+https://github.com/respoke/socket.io-client.git#c2b83bdcf014756aef9ac3681fdf95fee19bb6cd"
   }
 }
