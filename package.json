@@ -73,6 +73,7 @@
     "nock": "^2.3.0",
     "should": "^6.0.3",
     "sinon": "^1.10.3",
+    "socket.io": "^0.9.17",
     "uuid": "^2.0.1"
   },
   "dependencies": {
