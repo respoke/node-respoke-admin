@@ -7,7 +7,7 @@
     "test": "istanbul cover _mocha 'spec/**/*.spec.js'",
     "functional": "mocha 'spec/functional/**/*.spec.js'",
     "unit": "mocha 'spec/unit/**/*.spec.js'",
-    "debug-test": "DEBUG=respoke-client,respoke-admin npm test",
+    "debug-test": "DEBUG=respoke-* npm test",
     "docs": "grunt docs",
     "build-readme": "grunt build"
   },
@@ -33,7 +33,7 @@
       "email": "me@dan-jenkins.co.uk"
     },
     {
-      "name": "Jeff Parrish",
+      "name": "Jeff H. Parrish",
       "email": "jeffhparrish@gmail.com"
     },
     {
