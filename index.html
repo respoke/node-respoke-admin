@@ -94,7 +94,9 @@ In general, the hierarchy of credentials is as follows:</p>
  var admin = new Respoke({
      // from the Respoke developer console under one of your apps
      appId: &quot;XXXX-XXX-XXXXX-XXXX&quot;,
-     &#39;App-Secret&#39;: &#39;XXXX-XXXXX-XXX-XXXXXXXX&#39;
+     &#39;App-Secret&#39;: &#39;XXXX-XXXXX-XXX-XXXXXXXX&#39;,
+     // if the respoke socket is lost, keep trying to reconnect automatically
+     autoreconnect: true
  });
 
  // connect to respoke
@@ -140,7 +142,10 @@ In general, the hierarchy of credentials is as follows:</p>
      });
  });
 </code></pre><hr>
-</div><br><h2>Constructor</h2><h4><code>new Respoke(options)</code></h4><br><h5>Arguments</h5><div class="row param"><div class="col-sm-4"><code>options</code></div><div class="col-sm-3"><strong>object</strong></div><div class="col-sm-5">Optional</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>options.appId</code></div><div class="col-sm-3"><strong>string</strong></div><div class="col-sm-5">Optional</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>options['Admin-Token']</code></div><div class="col-sm-3"><strong>object</strong></div><div class="col-sm-5">Optional header, if you already authenticated</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>options['App-Secret']</code></div><div class="col-sm-3"><strong>object</strong></div><div class="col-sm-5">Optional header, from Respoke dev console</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>options['App-Token']</code></div><div class="col-sm-3"><strong>object</strong></div><div class="col-sm-5">Optional header, if you already authenticated</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>options.baseURL=https://api.respoke.io/v1</code></div><div class="col-sm-3"><strong>string</strong></div><div class="col-sm-5">Optional</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>options.socket</code></div><div class="col-sm-3"><strong>object</strong></div><div class="col-sm-5">Optional, overrides the default socket.io client</div></div><br class="visible-xs"><br><br><h2>Properties and Methods</h2><br>
+</div><br><h2>Constructor</h2><h4><code>new Respoke(options)</code></h4><br><h5>Arguments</h5><div class="row param"><div class="col-sm-4"><code>options</code></div><div class="col-sm-3"><strong>object</strong></div><div class="col-sm-5">Optional</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>options.appId</code></div><div class="col-sm-3"><strong>string</strong></div><div class="col-sm-5">Optional</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>options['Admin-Token']</code></div><div class="col-sm-3"><strong>string</strong></div><div class="col-sm-5">Optional header, if you already authenticated</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>options['App-Secret']</code></div><div class="col-sm-3"><strong>string</strong></div><div class="col-sm-5">Optional header, from Respoke dev console</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>options['App-Token']</code></div><div class="col-sm-3"><strong>string</strong></div><div class="col-sm-5">Optional header, if you already authenticated</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>options.endpointId</code></div><div class="col-sm-3"><strong>string</strong></div><div class="col-sm-5">Optional endpointId to use when connecting via web socket
+using auth scheme which does not imply an endpointId (i.e. App-Secret)</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>options.autoreconnect=false</code></div><div class="col-sm-3"><strong>boolean</strong></div><div class="col-sm-5">Optional flag to automatically reconnect to
+respoke if a web socket connection becomes active, then is lost. This will throw an error
+when attempting to reconnect if specified without an App-Secret.</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>options.baseURL=https://api.respoke.io/v1</code></div><div class="col-sm-3"><strong>string</strong></div><div class="col-sm-5">Optional</div></div><br class="visible-xs"><div class="row param"><div class="col-sm-4"><code>options.socket</code></div><div class="col-sm-3"><strong>object</strong></div><div class="col-sm-5">Optional, overrides the default socket.io client</div></div><br class="visible-xs"><br><br><h2>Properties and Methods</h2><br>
 </div><div id="tokens" class="comment"><h4><code>object</code><a href="#tokens" class="bold"> respoke.tokens</a></h4><div><p>Container object for header tokens.
 These are used when performing REST or web socket requests to Respoke.</p>
 </div><br><br><br>
@@ -154,7 +159,8 @@ These are used when performing REST or web socket requests to Respoke.</p>
 </div><br><br><br>
 </div><div id="connectionId" class="comment"><h4><code>string</code><a href="#connectionId" class="bold"> respoke.connectionId</a></h4><div><p>If connected, this is the web socket connection ID with Respoke.</p>
 </div><br><br><br>
-</div><div id="endpointId" class="comment"><h4><code>string</code><a href="#endpointId" class="bold"> respoke.endpointId</a></h4><div><p>If connected, this is the endpointId.</p>
+</div><div id="endpointId" class="comment"><h4><code>string</code><a href="#endpointId" class="bold"> respoke.endpointId</a></h4><div><p>If connected, this is the endpointId. Stored endpointId for use when connecting
+with App-Secret via web socket (when not a specific endpoint).</p>
 </div><br><br><br>
 </div><div id="baseURL" class="comment"><h4><code>string</code><a href="#baseURL" class="bold"> respoke.baseURL</a></h4><div><p>The base respoke api to use. In most circumstances there is no reason
 to change this.</p>
