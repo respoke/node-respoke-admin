@@ -1,8 +1,6 @@
 
 [![NPM Version](https://badge.fury.io/js/respoke-admin.svg)](https://badge.fury.io/js/respoke-admin)
 [![Build Status](https://travis-ci.org/respoke/node-respoke-admin.svg)](https://travis-ci.org/respoke/node-respoke-admin)
-[![Dependency Status](https://david-dm.org/respoke/node-respoke-admin.svg)](https://david-dm.org/respoke/node-respoke-admin)
-[![devDependency Status](https://david-dm.org/respoke/node-respoke-admin/dev-status.svg)](https://david-dm.org/respoke/node-respoke-admin#info=devDependencies)
 
 # respoke-admin
 
