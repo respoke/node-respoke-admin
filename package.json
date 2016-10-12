@@ -1,13 +1,13 @@
 {
   "name": "respoke-admin",
-  "version": "1.7.1",
+  "version": "1.8.0",
   "description": "Respoke API client library for Node.js.",
   "main": "index.js",
   "scripts": {
     "test": "istanbul cover _mocha 'spec/**/*.spec.js'",
     "functional": "mocha 'spec/functional/**/*.spec.js'",
     "unit": "mocha 'spec/unit/**/*.spec.js'",
-    "debug-test": "DEBUG=respoke-client,respoke-admin npm test",
+    "debug-test": "DEBUG=respoke-* npm test",
     "docs": "grunt docs",
     "build-readme": "grunt build"
   },
@@ -33,7 +33,7 @@
       "email": "me@dan-jenkins.co.uk"
     },
     {
-      "name": "Jeff Parrish",
+      "name": "Jeff H. Parrish",
       "email": "jeffhparrish@gmail.com"
     },
     {
@@ -73,6 +73,7 @@
     "nock": "^2.3.0",
     "should": "^6.0.3",
     "sinon": "^1.10.3",
+    "socket.io": "^0.9.17",
     "uuid": "^2.0.1"
   },
   "dependencies": {
