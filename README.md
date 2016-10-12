@@ -59,7 +59,7 @@ npm run docs
 
 ## License
 
-Copyright 2014-2015, Digium, Inc.
+Copyright 2014-2016, Digium, Inc.
 All rights reserved.
 
 This source code is licensed under The MIT License found in the
