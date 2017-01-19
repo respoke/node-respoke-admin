@@ -1,6 +1,6 @@
 {
   "name": "respoke-admin",
-  "version": "1.9.0",
+  "version": "2.0.0",
   "description": "Respoke API client library for Node.js.",
   "main": "index.js",
   "scripts": {
